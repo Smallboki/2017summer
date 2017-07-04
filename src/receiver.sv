@@ -1,10 +1,12 @@
-module receiver_gps(
+module receiver(
 	input i_clk,
 	input i_rst,
 	input i_rx,
 
 	output check,
-	output[7:0] Data[127:0];
+	output[7:0] Talker_Idnetifier,
+	output[7:0] Sentence_Identifier,
+	output[7:0] Data[127:0]
 );
 
 //parameter
@@ -24,8 +26,8 @@ logic[7:0] checksum_r,checksum_w;
 logic checksum_failed_r,checksum_failed_w;
 logic check_r,check_w;
 
-logic[7:0] Talker_Identifier[1:0];
-logic[7:0] Sentence_Identifier[2:0];
+logic[7:0] Talker_Identifier_r[1:0],Talker_Identifier_w[1:0];
+logic[7:0] Sentence_Identifier_r[2:0],Sentence_Identifier_w[2:0];
 logic[7:0] Checksum_r,Checksum_w;
 //submodule
 
@@ -34,6 +36,8 @@ char(.i_clk(i_clk),.i_rst(i_rst),.i_rx(i_rx),.o_char(char),.o_finished(finished)
 //combinational
 
 assign check = check_r;
+assign Talker_Identifier = Talker_Identifier_r;
+assign Sentence_Identifier = Sentence_Identifier_r;
 
 always@(*) begin
 
@@ -49,20 +53,23 @@ always@(*) begin
 					state_w = state_r;
 			end
 			TI: begin
-				cnt_w = cnt_r + 1;
+				cnt_w = cnt_r == 1? 0 : cnt_r + 1;
+				state_w = cnt_r == 1? SI : state_r;
 				checksum_w = checksum_r ^ char;
+				Talker_Identifier_w[cnt_r] = char;
 			end
 			SI: begin
-				cnt_w = cnt_r + 1;
+				cnt_w = cnt_r == 2? 0 : cnt_r + 1;
+				state_w = cnt_r == 2? DATA : state_r;
 				checksum_w = checksum_r ^ char;
 			end
 			DATA: begin
 				checksum_w = checksum_r ^ char;
 				if(char = ",") begin
-					
+
 				end
-				else begin
-					
+				else
+
 				end
 				if(char == "*")
 					state_w = CHECK;
