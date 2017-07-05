@@ -4,12 +4,13 @@ module storage(
 	input[23:0] si0,
 	input[7:0] D0,
 	input[7:0] field0
-
-	output[]
-		);
+	);
 
 //parameter
 //logics
+
+
+
 //combinational
 
 always@(*) begin
