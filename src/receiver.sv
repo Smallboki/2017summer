@@ -4,6 +4,7 @@ module receiver(
 	input i_rx,
 
 	output check,
+	output End,
 	output[15:0] Talker_Idnetifier,
 	output[23:0] Sentence_Identifier,
 	output[7:0] Data,
@@ -26,6 +27,7 @@ logic finished;
 logic[7:0] checksum_r,checksum_w;
 logic checksum_failed_r,checksum_failed_w;
 logic check_r,check_w;
+logic End_r,End_w;
 
 logic[7:0] Talker_Identifier_r[1:0],Talker_Identifier_w[1:0];
 logic[7:0] Sentence_Identifier_r[2:0],Sentence_Identifier_w[2:0];
@@ -38,6 +40,7 @@ char(.i_clk(i_clk),.i_rst(i_rst),.i_rx(i_rx),.o_char(char),.o_finished(finished)
 //combinational
 
 assign check = check_r;
+assign End = End_r;
 assign Talker_Identifier[7:0] = Talker_Identifier_r[0];
 assign Talker_Identifier[15:8] = Talker_Identifier_r[1];
 assign Sentence_Identifier[7:0] = Sentence_Identifier_r[0];
@@ -46,9 +49,19 @@ assign Sentence_Identifier[13:16] = Snetence_Identifier_r[2];
 assign fieldcnt = fieldcnt_r;
 
 always@(*) begin
-
+	state_w = state_r;
+	cnt_w = cnt_r;
 	checksum_w = checksum_r;
 	check_w = check_r;
+	End_w = End_r;
+	checksum_failed_w = checksum_failed_r;
+	fieldcnt_w = fieldcnt_r;
+	Checksum_w = Checksum_r;
+	Takler_Identifier_w[0] = Talker_Identifier_r[0];
+	Takler_Identifier_w[1] = Talker_Identifier_r[1];
+	Sentence_Identifier_w[0] = Sentence_Identifier_r[0];
+	Sentence_Identifier_w[1] = Sentence_Identifier_r[1];
+	Sentence_Identifier_w[2] = Sentence_Identifier_r[2];
 
 	if(finished) begin
 		case(state_r)
@@ -106,9 +119,11 @@ always@(*) begin
 				if(cnt_r == nChecksum - 1) begin
 					cnt_w = 0;
 					state_w = END;
+					End_w = 1'd0;
 				end
 				else begin
 					cnt_w = cnt_r + 1;
+					End_w = 1'd1;
 				end
 			end
 			END: begin
@@ -134,6 +149,19 @@ always@(*) begin
 		endcase
 	end
 	else begin
+		state_w = state_r;
+		cnt_w = cnt_r;
+		checksum_w = checksum_r;
+		check_w = check_r;
+		End_w = End_r;
+		checksum_failed_w = checksum_failed_r;
+		fieldcnt_w = fieldcnt_r;
+		Checksum_w = Checksum_r;
+		Takler_Identifier_w[0] = Talker_Identifier_r[0];
+		Takler_Identifier_w[1] = Talker_Identifier_r[1];
+		Sentence_Identifier_w[0] = Sentence_Identifier_r[0];
+		Sentence_Identifier_w[1] = Sentence_Identifier_r[1];
+		Sentence_Identifier_w[2] = Sentence_Identifier_r[2];
 	end
 end
 
@@ -145,12 +173,28 @@ always@(posedge i_clk or negedge i_rst) begin
 		checksum_r <= 8'h00;
 		cnt_r <= 8'd0;
 		check_r <= 1'd0;
+		End_r <= 1'd0;
+		fieldcnt_r <= 0;
+		Checksum_r <= 8'h00;
+		Talker_Identifier_r[0] <= 0;
+		Talker_Identifier_r[1] <= 0;
+		Sentence_Identifier_r[0] <= 0;
+		Sentence_Identifier_r[1] <= 0;
+		Sentence_Identifier_r[2] <= 0;
 	end
 	else begin
 		state_r <= state_w;
 		checksum_r <= checksum_w;
 		cnt_r <= cnt_w;
 		check_r <= check_w;
+		End_r <= End_w;
+		fieldcnt_r <= fieldcnt_w;
+		Checksum_r <= Checksum_w;
+		Talker_Idnetifier_r[0] <= Talker_Identifier_w[0];
+		Talker_Idnetifier_r[1] <= Talker_Identifier_w[1];
+		Sentence_Identifier_r[0] <= Sentence_Identifier_w[0];
+		Sentence_Identifier_r[1] <= Sentence_Identifier_w[1];
+		Sentence_Identifier_r[2] <= Sentence_Identifier_w[2];
 	end
 end
 
