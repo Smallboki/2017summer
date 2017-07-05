@@ -4,9 +4,10 @@ module receiver(
 	input i_rx,
 
 	output check,
-	output[7:0] Talker_Idnetifier,
-	output[7:0] Sentence_Identifier,
-	output[7:0] Data[127:0]
+	output[15:0] Talker_Idnetifier,
+	output[23:0] Sentence_Identifier,
+	output[7:0] Data,
+	output[7:0] fieldcnt
 );
 
 //parameter
@@ -28,6 +29,7 @@ logic check_r,check_w;
 
 logic[7:0] Talker_Identifier_r[1:0],Talker_Identifier_w[1:0];
 logic[7:0] Sentence_Identifier_r[2:0],Sentence_Identifier_w[2:0];
+logic[7:0] fieldcnt_r,fieldcnt_w;
 logic[7:0] Checksum_r,Checksum_w;
 //submodule
 
@@ -36,8 +38,12 @@ char(.i_clk(i_clk),.i_rst(i_rst),.i_rx(i_rx),.o_char(char),.o_finished(finished)
 //combinational
 
 assign check = check_r;
-assign Talker_Identifier = Talker_Identifier_r;
-assign Sentence_Identifier = Sentence_Identifier_r;
+assign Talker_Identifier[7:0] = Talker_Identifier_r[0];
+assign Talker_Identifier[15:8] = Talker_Identifier_r[1];
+assign Sentence_Identifier[7:0] = Sentence_Identifier_r[0];
+assign Sentence_Identifier[15:8] = Snetence_Identifier_r[1];
+assign Sentence_Identifier[13:16] = Snetence_Identifier_r[2];
+assign fieldcnt = fieldcnt_r;
 
 always@(*) begin
 
@@ -61,16 +67,25 @@ always@(*) begin
 			SI: begin
 				cnt_w = cnt_r == 2? 0 : cnt_r + 1;
 				state_w = cnt_r == 2? DATA : state_r;
+				if(cnt_r == 2) begin
+					cnt_w = 0;
+					state_w = DATA;
+					fieldcnt_w = 1;
+				end
+				else begin
+					cnt_w = cnt_r + 1;
+					state_w = state_r;
+					fieldcnt_w = fieldcnt_r;
+				end
 				checksum_w = checksum_r ^ char;
 			end
 			DATA: begin
 				checksum_w = checksum_r ^ char;
-				if(char = ",") begin
-
-				end
+				if(char = ",")
+					fieldcnt_w = fieldcnt_r + 1;
 				else
+					fieldcnt_w = fieldcnt_r;
 
-				end
 				if(char == "*")
 					state_w = CHECK;
 				else
