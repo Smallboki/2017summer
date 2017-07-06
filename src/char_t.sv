@@ -3,7 +3,9 @@ module char_t(
 	input i_rst,
 	input[7:0] i_char,
 	input i_start,
+
 	output o_tx,
+	output o_finished
 		);
 //parameter
 //logic
