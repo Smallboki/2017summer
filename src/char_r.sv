@@ -1,9 +1,9 @@
-module char(
+module char_r(
 	input i_clk,
 	input i_rst,
 	input i_rx,
 	output[7:0] o_char,
-	output o_finished;
+	output o_finished
 	);
 //parameters
 

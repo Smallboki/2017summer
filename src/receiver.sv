@@ -35,7 +35,7 @@ logic[7:0] fieldcnt_r,fieldcnt_w;
 logic[7:0] Checksum_r,Checksum_w;
 //submodule
 
-char(.i_clk(i_clk),.i_rst(i_rst),.i_rx(i_rx),.o_char(char),.o_finished(finished));
+char_r(.i_clk(i_clk),.i_rst(i_rst),.i_rx(i_rx),.o_char(char),.o_finished(finished));
 
 //combinational
 
