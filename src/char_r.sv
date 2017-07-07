@@ -1,7 +1,7 @@
 module char_r(
-	input i_clk,//1152000Hz
+	input i_clk,//23040000Hz
 	input i_rst,
-	input i_baud,
+	input[2:0] i_baud,
 	input i_rx,
 	output[7:0] o_char,
 	output o_finished
@@ -15,8 +15,8 @@ enum { IDLE, DATA, STOP } state_r,state_w;
 logic[2:0] cnt_r,cnt_w;
 logic[8:0] sample_cnt_w,sample_cnt_r;
 logic finished;
-logic [8:0] period;
-logic [9:0] period_1_5;
+logic [12:0] period;
+logic [12:0] period_1_5;
 
 //combinational
 
@@ -27,9 +27,33 @@ assign o_finished = finished;
 
 always@(*) begin
 	case(i_baud)
-		0: begin//115200Hz
-			period = 10;
-			period_1_5 = 15;
+		0: begin//230400Hz
+			period = 100;
+			period_1_5 = 150;
+		end
+		1: begin//115200Hz
+			period = 200;
+			period_1_5 = 300;
+		end
+		2: begin//57600Hz
+			period = 400;
+			period_1_5 = 600;
+		end
+		3: begin//38400Hz
+			period = 600;
+			period_1_5 = 1000;
+		end
+		4: begin//19200Hz
+			period = 1200;
+			period_1_5 = 1800;
+		end
+		5: begin//9600Hz
+			period = 2400;
+			period_1_5 = 3600;
+		end
+		default: begin//4800Hz
+			period = 4800;
+			period_1_5 = 7200;
 		end
 	endcase
 end

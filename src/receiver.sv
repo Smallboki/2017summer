@@ -1,3 +1,5 @@
+`define ARRDWIDTH
+
 module receiver(
 	input i_clk,
 	input i_rst,
@@ -5,12 +7,10 @@ module receiver(
 	input i_baud,
 
 	output check,
-	output End,
-	output[15:0] Talker_Idnetifier,
-	output[23:0] Sentence_Identifier,
-	output[7:0] Data,
-	output[7:0] fieldcnt
-);
+
+	output[7:0] o_data
+	output[] o_addr
+	);
 
 //parameter
 
@@ -30,9 +30,6 @@ logic checksum_failed_r,checksum_failed_w;
 logic check_r,check_w;
 logic End_r,End_w;
 
-logic[7:0] Talker_Identifier_r[1:0],Talker_Identifier_w[1:0];
-logic[7:0] Sentence_Identifier_r[2:0],Sentence_Identifier_w[2:0];
-logic[7:0] fieldcnt_r,fieldcnt_w;
 logic[7:0] Checksum_r,Checksum_w;
 //submodule
 
@@ -41,13 +38,8 @@ char_r zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_rx(i_rx),.o_char(c
 //combinational
 
 assign check = check_r;
-assign End = End_r;
-assign Talker_Identifier[7:0] = Talker_Identifier_r[0];
-assign Talker_Identifier[15:8] = Talker_Identifier_r[1];
-assign Sentence_Identifier[7:0] = Sentence_Identifier_r[0];
-assign Sentence_Identifier[15:8] = Snetence_Identifier_r[1];
-assign Sentence_Identifier[13:16] = Snetence_Identifier_r[2];
-assign fieldcnt = fieldcnt_r;
+assign o_data = ;
+assign o_data = ;
 
 always@(*) begin
 	state_w = state_r;
@@ -56,13 +48,7 @@ always@(*) begin
 	check_w = check_r;
 	End_w = End_r;
 	checksum_failed_w = checksum_failed_r;
-	fieldcnt_w = fieldcnt_r;
 	Checksum_w = Checksum_r;
-	Takler_Identifier_w[0] = Talker_Identifier_r[0];
-	Takler_Identifier_w[1] = Talker_Identifier_r[1];
-	Sentence_Identifier_w[0] = Sentence_Identifier_r[0];
-	Sentence_Identifier_w[1] = Sentence_Identifier_r[1];
-	Sentence_Identifier_w[2] = Sentence_Identifier_r[2];
 
 	if(finished) begin
 		case(state_r)
@@ -84,21 +70,15 @@ always@(*) begin
 				if(cnt_r == 2) begin
 					cnt_w = 0;
 					state_w = DATA;
-					fieldcnt_w = 1;
 				end
 				else begin
 					cnt_w = cnt_r + 1;
 					state_w = state_r;
-					fieldcnt_w = fieldcnt_r;
 				end
 				checksum_w = checksum_r ^ char;
 			end
 			DATA: begin
 				checksum_w = checksum_r ^ char;
-				if(char = ",")
-					fieldcnt_w = fieldcnt_r + 1;
-				else
-					fieldcnt_w = fieldcnt_r;
 
 				if(char == "*")
 					state_w = CHECK;
@@ -156,13 +136,7 @@ always@(*) begin
 		check_w = check_r;
 		End_w = End_r;
 		checksum_failed_w = checksum_failed_r;
-		fieldcnt_w = fieldcnt_r;
 		Checksum_w = Checksum_r;
-		Takler_Identifier_w[0] = Talker_Identifier_r[0];
-		Takler_Identifier_w[1] = Talker_Identifier_r[1];
-		Sentence_Identifier_w[0] = Sentence_Identifier_r[0];
-		Sentence_Identifier_w[1] = Sentence_Identifier_r[1];
-		Sentence_Identifier_w[2] = Sentence_Identifier_r[2];
 	end
 end
 
@@ -175,13 +149,7 @@ always@(posedge i_clk or negedge i_rst) begin
 		cnt_r <= 8'd0;
 		check_r <= 1'd0;
 		End_r <= 1'd0;
-		fieldcnt_r <= 0;
 		Checksum_r <= 8'h00;
-		Talker_Identifier_r[0] <= 0;
-		Talker_Identifier_r[1] <= 0;
-		Sentence_Identifier_r[0] <= 0;
-		Sentence_Identifier_r[1] <= 0;
-		Sentence_Identifier_r[2] <= 0;
 	end
 	else begin
 		state_r <= state_w;
@@ -189,13 +157,7 @@ always@(posedge i_clk or negedge i_rst) begin
 		cnt_r <= cnt_w;
 		check_r <= check_w;
 		End_r <= End_w;
-		fieldcnt_r <= fieldcnt_w;
 		Checksum_r <= Checksum_w;
-		Talker_Idnetifier_r[0] <= Talker_Identifier_w[0];
-		Talker_Idnetifier_r[1] <= Talker_Identifier_w[1];
-		Sentence_Identifier_r[0] <= Sentence_Identifier_w[0];
-		Sentence_Identifier_r[1] <= Sentence_Identifier_w[1];
-		Sentence_Identifier_r[2] <= Sentence_Identifier_w[2];
 	end
 end
 
