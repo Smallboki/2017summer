@@ -2,6 +2,7 @@ module receiver(
 	input i_clk,
 	input i_rst,
 	input i_rx,
+	input i_baud,
 
 	output check,
 	output End,
@@ -35,7 +36,7 @@ logic[7:0] fieldcnt_r,fieldcnt_w;
 logic[7:0] Checksum_r,Checksum_w;
 //submodule
 
-char_r zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_rx(i_rx),.o_char(char),.o_finished(finished));
+char_r zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_rx(i_rx),.o_char(char),.o_finished(finished));
 
 //combinational
 
