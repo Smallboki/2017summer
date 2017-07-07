@@ -9,17 +9,23 @@ module collector(
 	output[`ADDRWIDTH - 1:0] o_addr,
 	input[7:0] i_data,
 	output[7:0] o_data
-		);
+	);
 //parameters
 
 integer i;
+
 //logics
 
 logic[7:0] storage_w[99:0],storage_r[99:0];
+logic[`ADDRWIDTH:0] addr_w,addr_r;
 
 //combinational
 
 assign o_data = storage_r[0];
+
+always@(*) begin
+	
+end
 
 always@(*) begin
 	for(i = 0; i < 99; i = i + 1) begin
@@ -34,11 +40,13 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 100; i = i + 1) begin
 			storage_r[i] <= 0;
 		end
+		addr_r <= 0;
 	end
 	else begin
 		for(i = 0; i < 100; i = i + 1) begin
 			storage_r[i] <= storage_w[i];
 		end
+		addr_r <= addr_w;
 	end
 end
 endmodule
