@@ -3,7 +3,7 @@ module transmitter(
 	input i_rst,
 	input[7:0] D,
 
-	output o_tx,
+	output o_tx
 	);
 
 //parameter
@@ -18,15 +18,17 @@ logic start_r,tx,finished;
 
 //combinational
 
-char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_char(D),.i_start(start_r),.o_tx(tx));
+char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_char(D),.i_start(start_r),.o_tx(tx),.o_finished(finished));
 
 assign o_tx = tx;
 
 always@(*) begin
 	case(state_r)
 		IDLE: begin
+			
 		end
 		DATA: begin
+
 		end
 	endcase
 end

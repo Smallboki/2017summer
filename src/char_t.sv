@@ -6,7 +6,7 @@ module char_t(
 
 	output o_tx,
 	output o_finished
-		);
+	);
 //parameter
 //logic
 
