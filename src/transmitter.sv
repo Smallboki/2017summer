@@ -1,7 +1,7 @@
 module transmitter(
 	input i_clk,
 	input i_rst,
-	input[7:0] D,
+	input[7:0] i_D,
 	input i_baud,
 	input i_write,
 
@@ -16,13 +16,14 @@ integer i;
 
 
 logic[2:0] r_w,r_r,w_w,w_r;
-logic[7:0] D_w[7:0],D_r[7:0];
+logic[7:0] D_w[7:0],D_r[7:0],D;
 logic start_r,finished;
 
 //combinational
 
 char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_char(D),.i_start(start_r),.o_tx(o_tx),.o_finished(finished));
 
+assign D = D_r[r_r];
 
 always@(*) begin
 
@@ -32,7 +33,7 @@ always@(*) begin
 		w_w = w_r + 3'b1;
 		for(i = 0; i < 8; i = i + 1) begin
 			if(w_r == i)
-				D_w[w_r] = D;
+				D_w[w_r] = i_D;
 			else
 				D_w[i] = D_r[i];
 		end
