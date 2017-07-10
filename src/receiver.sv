@@ -3,8 +3,8 @@
 module receiver(
 	input i_clk,
 	input i_rst,
-	input i_rx,
-	input i_baud,
+	input[9:0] i_rx,
+	input[9:0] i_baud[9:0],
 
 	output check,
 
@@ -23,8 +23,8 @@ localparam nChecksum = 2;
 enum { IDLE, TI, SI, DATA, CHECK, END} state_r,state_w;
 
 logic ctn_w,ctn_r;
-logic[7:0] char;
-logic finished;
+logic[7:0] char[9:0];
+logic[9:0] finished;
 logic[7:0] checksum_r,checksum_w;
 logic checksum_failed_r,checksum_failed_w;
 logic check_r,check_w;
@@ -33,7 +33,16 @@ logic End_r,End_w;
 logic[7:0] Checksum_r,Checksum_w;
 //submodule
 
-char_r zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_rx(i_rx),.o_char(char),.o_finished(finished));
+char_r zchar_r0(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[0]),.i_rx(i_rx[0]),.o_char(char[0]),.o_finished(finished[0]));
+char_r zchar_r1(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[1]),.i_rx(i_rx[1]),.o_char(char[1]),.o_finished(finished[1]));
+char_r zchar_r2(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[2]),.i_rx(i_rx[2]),.o_char(char[2]),.o_finished(finished[2]));
+char_r zchar_r3(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[3]),.i_rx(i_rx[3]),.o_char(char[3]),.o_finished(finished[3]));
+char_r zchar_r4(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[4]),.i_rx(i_rx[4]),.o_char(char[4]),.o_finished(finished[4]));
+char_r zchar_r5(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[5]),.i_rx(i_rx[5]),.o_char(char[5]),.o_finished(finished[5]));
+char_r zchar_r6(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[6]),.i_rx(i_rx[6]),.o_char(char[6]),.o_finished(finished[6]));
+char_r zchar_r7(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[7]),.i_rx(i_rx[7]),.o_char(char[7]),.o_finished(finished[7]));
+char_r zchar_r8(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[8]),.i_rx(i_rx[8]),.o_char(char[8]),.o_finished(finished[8]));
+char_r zchar_r9(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[9]),.i_rx(i_rx[9]),.o_char(char[9]),.o_finished(finished[9]));
 
 //combinational
 
