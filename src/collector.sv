@@ -20,6 +20,16 @@ module collector(
 //parameters
 
 integer i;
+localparam OFFSET0 = ;
+localparam OFFSET1 = ;
+localparam OFFSET2 = ;
+localparam OFFSET3 = ;
+localparam OFFSET4 = ;
+localparam OFFSET5 = ;
+localparam OFFSET6 = ;
+localparam OFFSET7 = ;
+localparam OFFSET8 = ;
+localparam OFFSET9 = ;
 
 //logics
 
@@ -64,6 +74,7 @@ transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[1
 assign o_data = storage_r[0];
 assign rready = &ready;
 assign WE = we_r;
+assign RE = re_r;
 
 always@(*) begin
 	case(state_r)

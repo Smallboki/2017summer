@@ -4,6 +4,7 @@ module transmitter(
 	input[7:0] i_D,
 	input i_baud,
 	input i_write,
+	output o_full,
 
 	output o_tx
 	);
@@ -14,6 +15,7 @@ integer i;
 
 //logics
 
+enum {EMPTY, NORMAL, FULL} state_w,state_r;
 
 logic[2:0] r_w,r_r,w_w,w_r;
 logic[7:0] D_w[7:0],D_r[7:0],D;
@@ -24,6 +26,7 @@ logic start_r,finished;
 char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_char(D),.i_start(start_r),.o_tx(o_tx),.o_finished(finished));
 
 assign D = D_r[r_r];
+assign o_full = 
 
 always@(*) begin
 
@@ -53,6 +56,18 @@ always@(*) begin
 	end
 end
 
+always@(*) begin
+	case(state_r)
+		EMPTY: begin
+			
+		end
+		NORMAL: begin
+		end
+		FULL: begin
+		end
+	endcase
+end
+
 //sequential
 
 always@(posedge i_clk or negedge i_rst) begin
@@ -62,6 +77,7 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 8; i = i + 1) begin
 			D_r[i] <= 0;
 		end
+		state_r <= EMPTY;
 	end
 	else begin
 		w_r <= w_w;
@@ -69,6 +85,7 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 8; i = i + 1) begin
 			D_r[i] <= D_w[i];
 		end
+		state_r <= state_w;
 	end
 end
 
