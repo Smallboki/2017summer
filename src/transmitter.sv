@@ -15,18 +15,17 @@ integer i;
 
 //logics
 
-enum {EMPTY, NORMAL, FULL} state_w,state_r;
-
 logic[2:0] r_w,r_r,w_w,w_r;
 logic[7:0] D_w[7:0],D_r[7:0],D;
 logic start_r,finished;
+logic full;
 
 //combinational
 
 char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_char(D),.i_start(start_r),.o_tx(o_tx),.o_finished(finished));
 
 assign D = D_r[r_r];
-assign o_full = 
+assign o_full = full;
 
 always@(*) begin
 
@@ -54,18 +53,11 @@ always@(*) begin
 	else begin
 		r_w = r_r;
 	end
-end
 
-always@(*) begin
-	case(state_r)
-		EMPTY: begin
-			
-		end
-		NORMAL: begin
-		end
-		FULL: begin
-		end
-	endcase
+	if((w_w == r_w) && (w_r < r_r))
+		full = 1;
+	else
+		full = 0;
 end
 
 //sequential

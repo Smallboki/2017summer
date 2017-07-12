@@ -4,7 +4,8 @@ module char_r(
 	input[2:0] i_baud,
 	input i_rx,
 	output[7:0] o_char,
-	output o_finished
+	output o_finished,
+	output o_state
 	);
 //parameters
 
@@ -22,8 +23,7 @@ logic [12:0] period_1_5;
 
 assign o_char = char_r;
 assign o_finished = finished;
-
-
+assign o_state = state_r == IDLE? 0:1;
 
 always@(*) begin
 	case(i_baud)
@@ -72,7 +72,7 @@ always@(*) begin
 		end
 		DATA: begin
 			finised = 0;
-			
+
 			if(sample_cnt_r < (cnt_r == 0 ? period_1_5:period)) begin
 				sample_cnt_w = sample_cnt_r + 1;
 				cnt_w = cnt_r;
