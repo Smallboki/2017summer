@@ -36,6 +36,7 @@ localparam OFFSET9 = 9216;
 enum {RECV,SEND} state_w,state_r;
 
 logic[9:0] ready,write,read,full,used;
+logic[`ADDRWIDTH:0] readaddr_w[99:0],readaddr_r[99:0];
 logic[`ADDRWIDTH:0] writeaddr_w[9:0],writeaddr_r[9:0];
 logic[`ADDRWIDTH:0] addr;
 logic we_r,re_r;
@@ -45,6 +46,7 @@ logic[3:0] sport_w,sport_r;
 logic[3:0] port_w[9:0],port_r[9:0];
 
 logic rready;
+logic[`ADDRWIDTH:0] offset[9:0];
 
 //submodules
 
@@ -77,6 +79,16 @@ assign rready = &ready;
 assign WE = we_r;
 assign RE = re_r;
 assign o_addr = addr;
+assign offset[0] = OFFSET0;
+assign offset[1] = OFFSET1;
+assign offset[2] = OFFSET2;
+assign offset[3] = OFFSET3;
+assign offset[4] = OFFSET4;
+assign offset[5] = OFFSET5;
+assign offset[6] = OFFSET6;
+assign offset[7] = OFFSET7;
+assign offset[8] = OFFSET8;
+assign offset[9] = OFFSET9;
 
 always@(*) begin
 	case(state_r)
@@ -112,6 +124,31 @@ always@(*) begin
 			else
 				state_w = SEND;
 
+			for(i = 0; i < 10; i = i + 1) begin
+				if(sport_r == i) begin
+					for(j = 0; j < 10; j = j + 1) begin
+						if(port[i] == j) else
+							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j] < offset[i] + 1024?readaddr_r[i * 10 + j] : offset[j];
+						end
+					end
+					if(used[port_r[i]] && !(i_D == 8'ha)) begin
+						write[i] = 1;
+						port_w[i] = port_r[i];
+					end
+					else begin
+						write[i] = 0;
+						port_w[i] = port_r[i] < 9? port_r[i] + 1 : 0;
+					end
+				end
+				else begin
+					for(j = 0; j < 10; j = j + 1) begin
+						readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j];
+					end
+					port_w[i] = port_r[i];
+					write[i] = 0;
+				end
+			end
+			addr = readaddr_r[sport_r * 10 + port_r[sport_r]];
 			re_r = 1;
 			we_r = 0;
 			rport_w = rport_r;
@@ -125,8 +162,12 @@ end
 always@(posedge i_clk or negedge i_rst) begin
 	if(!i_rst) begin
 		for(i = 0; i < 10;i = i + 1) begin
-			readaddr_r[i] <= 0;
 			port_r[i] <= 0;
+		end
+		for(i = 0; i < 10;i = i + 1) begin
+			for(j = 0; j < 10;j = j + 1) begin
+				readaddr_r[i * 10 + j] <= offset[j];
+			end
 		end
 		sport_r <= 0;
 		rport_r <= 0;
@@ -144,12 +185,13 @@ always@(posedge i_clk or negedge i_rst) begin
 	else begin
 		for(i = 0; i < 10;i = i + 1) begin
 			writeaddr_r[i] <= writeaddr_w[i];
-			readaddr_r[i] <= writeaddr_w[i];
 			port_r[i] <= port_w[i];
+		end
+		for(i = 0; i < 100; i = i + 1) begin
+			readaddr_r[i] <= readaddr_w[i];
 		end
 		sport_r <= sport_w;
 		rport_r <= rport_w;
 	end
 end
-
 endmodule
