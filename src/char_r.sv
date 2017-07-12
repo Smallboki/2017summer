@@ -1,7 +1,7 @@
 module char_r(
 	input i_clk,//23040000Hz
 	input i_rst,
-	input[2:0] i_baud,
+	input[15:0] i_baud,
 	input i_rx,
 	output[7:0] o_char,
 	output o_finished,
@@ -26,7 +26,7 @@ assign o_finished = finished;
 assign o_state = state_r == IDLE? 0:1;
 
 always@(*) begin
-	case(i_baud)
+	case(i_baud[2:0])
 		0: begin//230400Hz
 			period = 100;
 			period_1_5 = 150;

@@ -5,7 +5,6 @@ module collector(
 	input i_clk,//sampling frequency
 	input i_rst,
 
-	input[19:0] i_baud,
 	input[9:0] i_rx,
 	output[9:0] o_tx,
 
@@ -14,8 +13,10 @@ module collector(
 	input[7:0] i_D,
 	output[7:0] o_D,
 	output WE,
-	output RE
-	//
+	output RE,
+	//cnotroller
+	input[7:0] i_inst,
+	input i_set
 	);
 //parameters
 
@@ -33,6 +34,7 @@ localparam OFFSET9 = 9216;
 
 //logics
 
+	//receiver & transmitter
 enum {RECV,SEND} state_w,state_r;
 
 logic[9:0] ready,write,read,full,used;
@@ -48,29 +50,35 @@ logic[3:0] port_w[9:0],port_r[9:0];
 logic rready;
 logic[`ADDRWIDTH:0] offset[9:0];
 
+	//controlunit
+enum {ADDR,DATA} cstate_w,cstate_r;
+
+logic[15:0] ctrl_w[29:0],ctrl_r[29:0];//0~9: portmap; 10~29: baud
+logic[15:0] portmap;
+logic[15:0] caddr_w,caddr_r;
 //submodules
 
-receiver xreceiver_0(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[0]),.o_ready(ready[0]),.o_used(used[0]),.o_D(o_D),.i_baud(i_baud[0]),.i_rx(i_rx[0]));
-receiver xreceiver_1(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[1]),.o_ready(ready[1]),.o_used(used[1]),.o_D(o_D),.i_baud(i_baud[1]),.i_rx(i_rx[1]));
-receiver xreceiver_2(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[2]),.o_ready(ready[2]),.o_used(used[2]),.o_D(o_D),.i_baud(i_baud[2]),.i_rx(i_rx[2]));
-receiver xreceiver_3(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[3]),.o_ready(ready[3]),.o_used(used[3]),.o_D(o_D),.i_baud(i_baud[3]),.i_rx(i_rx[3]));
-receiver xreceiver_4(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[4]),.o_ready(ready[4]),.o_used(used[4]),.o_D(o_D),.i_baud(i_baud[4]),.i_rx(i_rx[4]));
-receiver xreceiver_5(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[5]),.o_ready(ready[5]),.o_used(used[5]),.o_D(o_D),.i_baud(i_baud[5]),.i_rx(i_rx[5]));
-receiver xreceiver_6(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[6]),.o_ready(ready[6]),.o_used(used[6]),.o_D(o_D),.i_baud(i_baud[6]),.i_rx(i_rx[6]));
-receiver xreceiver_7(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[7]),.o_ready(ready[7]),.o_used(used[7]),.o_D(o_D),.i_baud(i_baud[7]),.i_rx(i_rx[7]));
-receiver xreceiver_8(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[8]),.o_ready(ready[8]),.o_used(used[8]),.o_D(o_D),.i_baud(i_baud[8]),.i_rx(i_rx[8]));
-receiver xreceiver_9(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[9]),.o_ready(ready[9]),.o_used(used[9]),.o_D(o_D),.i_baud(i_baud[9]),.i_rx(i_rx[9]));
+receiver xreceiver_0(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[0]),.o_ready(ready[0]),.o_used(used[0]),.o_D(o_D),.i_baud(ctrl_r[10]),.i_rx(i_rx[0]));
+receiver xreceiver_1(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[1]),.o_ready(ready[1]),.o_used(used[1]),.o_D(o_D),.i_baud(ctrl_r[11]),.i_rx(i_rx[1]));
+receiver xreceiver_2(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[2]),.o_ready(ready[2]),.o_used(used[2]),.o_D(o_D),.i_baud(ctrl_r[12]),.i_rx(i_rx[2]));
+receiver xreceiver_3(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[3]),.o_ready(ready[3]),.o_used(used[3]),.o_D(o_D),.i_baud(ctrl_r[13]),.i_rx(i_rx[3]));
+receiver xreceiver_4(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[4]),.o_ready(ready[4]),.o_used(used[4]),.o_D(o_D),.i_baud(ctrl_r[14]),.i_rx(i_rx[4]));
+receiver xreceiver_5(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[5]),.o_ready(ready[5]),.o_used(used[5]),.o_D(o_D),.i_baud(ctrl_r[15]),.i_rx(i_rx[5]));
+receiver xreceiver_6(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[6]),.o_ready(ready[6]),.o_used(used[6]),.o_D(o_D),.i_baud(ctrl_r[16]),.i_rx(i_rx[6]));
+receiver xreceiver_7(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[7]),.o_ready(ready[7]),.o_used(used[7]),.o_D(o_D),.i_baud(ctrl_r[17]),.i_rx(i_rx[7]));
+receiver xreceiver_8(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[8]),.o_ready(ready[8]),.o_used(used[8]),.o_D(o_D),.i_baud(ctrl_r[18]),.i_rx(i_rx[8]));
+receiver xreceiver_9(.i_clk(i_clk),.i_rst(i_rst),.i_read(read[9]),.o_ready(ready[9]),.o_used(used[9]),.o_D(o_D),.i_baud(ctrl_r[19]),.i_rx(i_rx[9]));
 
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[10]),.o_full(full[0]),.i_write(write[0]),.o_tx(o_tx[0]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[11]),.o_full(full[1]),.i_write(write[1]),.o_tx(o_tx[1]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[12]),.o_full(full[2]),.i_write(write[2]),.o_tx(o_tx[2]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[13]),.o_full(full[3]),.i_write(write[3]),.o_tx(o_tx[3]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[14]),.o_full(full[4]),.i_write(write[4]),.o_tx(o_tx[4]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[15]),.o_full(full[5]),.i_write(write[5]),.o_tx(o_tx[5]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[16]),.o_full(full[6]),.i_write(write[6]),.o_tx(o_tx[6]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[17]),.o_full(full[7]),.i_write(write[7]),.o_tx(o_tx[7]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[18]),.o_full(full[8]),.i_write(write[8]),.o_tx(o_tx[8]));
-transmitter xtransmitter_(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(i_baud[19]),.o_full(full[9]),.i_write(write[9]),.o_tx(o_tx[9]));
+transmitter xtransmitter_0(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[20]),.o_full(full[0]),.i_write(write[0]),.o_tx(o_tx[0]));
+transmitter xtransmitter_1(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[21]),.o_full(full[1]),.i_write(write[1]),.o_tx(o_tx[1]));
+transmitter xtransmitter_2(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[22]),.o_full(full[2]),.i_write(write[2]),.o_tx(o_tx[2]));
+transmitter xtransmitter_3(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[23]),.o_full(full[3]),.i_write(write[3]),.o_tx(o_tx[3]));
+transmitter xtransmitter_4(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[24]),.o_full(full[4]),.i_write(write[4]),.o_tx(o_tx[4]));
+transmitter xtransmitter_5(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[25]),.o_full(full[5]),.i_write(write[5]),.o_tx(o_tx[5]));
+transmitter xtransmitter_6(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[26]),.o_full(full[6]),.i_write(write[6]),.o_tx(o_tx[6]));
+transmitter xtransmitter_7(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[27]),.o_full(full[7]),.i_write(write[7]),.o_tx(o_tx[7]));
+transmitter xtransmitter_8(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[28]),.o_full(full[8]),.i_write(write[8]),.o_tx(o_tx[8]));
+transmitter xtransmitter_9(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[29]),.o_full(full[9]),.i_write(write[9]),.o_tx(o_tx[9]));
 
 //combinational
 
@@ -90,6 +98,7 @@ assign offset[7] = OFFSET7;
 assign offset[8] = OFFSET8;
 assign offset[9] = OFFSET9;
 
+//receive & transmmit
 always@(*) begin
 	case(state_r)
 		RECV: begin
@@ -123,15 +132,15 @@ always@(*) begin
 				state_w = RECV;
 			else
 				state_w = SEND;
-
 			for(i = 0; i < 10; i = i + 1) begin
+				portmap = ctrl_r[i];
 				if(sport_r == i) begin
 					for(j = 0; j < 10; j = j + 1) begin
-						if(port[i] == j) else
+						if(port_r[i] == j) begin
 							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j] < offset[i] + 1024?readaddr_r[i * 10 + j] : offset[j];
 						end
 					end
-					if(used[port_r[i]] && !(i_D == 8'ha)) begin
+					if(used[port_r[i]] && !(i_D == 8'ha) && portmap[port_r[i]]) begin
 						write[i] = 1;
 						port_w[i] = port_r[i];
 					end
@@ -156,7 +165,25 @@ always@(*) begin
 		end
 	endcase
 end
-
+	//control unit
+always@(*) begin
+	if(cstate_r == ADDR) begin
+		for(i = 0; i < 30; i = i + 1) begin
+			ctrl_w[i] = ctrl_r[i];
+		end
+		caddr_w = i_inst;
+		state_w = i_set? DATA : ADDR;
+	end
+	else begin
+		for(i = 0; i < 29; i = i + 1) begin
+			if(caddr_r == i)
+				ctrl_w[i] = i_inst;
+			else
+				ctrl_w[i] = ctrl_r[i];
+		end
+		state_w = ADDR;
+	end
+end
 //sequential
 
 always@(posedge i_clk or negedge i_rst) begin
@@ -168,6 +195,12 @@ always@(posedge i_clk or negedge i_rst) begin
 			for(j = 0; j < 10;j = j + 1) begin
 				readaddr_r[i * 10 + j] <= offset[j];
 			end
+		end
+		for(i = 0; i < 10; i = i + 1) begin
+			ctrl_r[i] <= 16'b0000001111111111;
+		end
+		for(i = 10; i < 30; i = i + 1) begin
+			ctrl_r[i] <= 16'd1;
 		end
 		sport_r <= 0;
 		rport_r <= 0;
@@ -189,6 +222,9 @@ always@(posedge i_clk or negedge i_rst) begin
 		end
 		for(i = 0; i < 100; i = i + 1) begin
 			readaddr_r[i] <= readaddr_w[i];
+		end
+		for(i = 0; i < 30; i = 1 + 1) begin
+			ctrl_r[i] <= ctrl_w[i];
 		end
 		sport_r <= sport_w;
 		rport_r <= rport_w;
