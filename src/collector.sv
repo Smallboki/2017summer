@@ -36,8 +36,8 @@ localparam OFFSET9 = 9216;
 enum {RECV,SEND} state_w,state_r;
 
 logic[9:0] ready,write,read,full,used;
-logic[`ADDRWIDTH:0] readaddr_w[99:0],readaddr_r[99:0];
 logic[`ADDRWIDTH:0] writeaddr_w[9:0],writeaddr_r[9:0];
+logic[`ADDRWIDTH:0] addr;
 logic we_r,re_r;
 
 logic[3:0] rport_w,rport_r;
@@ -76,6 +76,7 @@ assign o_data = storage_r[0];
 assign rready = &ready;
 assign WE = we_r;
 assign RE = re_r;
+assign o_addr = addr;
 
 always@(*) begin
 	case(state_r)
@@ -96,8 +97,11 @@ always@(*) begin
 					writeaddr_w[i] = writeaddr_r[i];
 					we_r = 0;
 				end
+				readaddr_w[i] = readaddr_r[i];
+				port_w[i] = port_r[i];
 			end
 
+			addr = writeaddr_r[rport_r];
 			re_r = 0;
 			rport_w = rport_r == 9? 0 : rport_r + 1;
 			sport_w = sport_r;
@@ -107,8 +111,8 @@ always@(*) begin
 				state_w = RECV;
 			else
 				state_w = SEND;
-			
-			re_r = 0;
+
+			re_r = 1;
 			we_r = 0;
 			rport_w = rport_r;
 			sport_w = sport_r == 9? 0: sport_r + 1;
@@ -122,7 +126,10 @@ always@(posedge i_clk or negedge i_rst) begin
 	if(!i_rst) begin
 		for(i = 0; i < 10;i = i + 1) begin
 			readaddr_r[i] <= 0;
+			port_r[i] <= 0;
 		end
+		sport_r <= 0;
+		rport_r <= 0;
 		writeaddr_r[0] <= OFFSET0;
 		writeaddr_r[1] <= OFFSET1;
 		writeaddr_r[2] <= OFFSET2;
@@ -138,7 +145,10 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 10;i = i + 1) begin
 			writeaddr_r[i] <= writeaddr_w[i];
 			readaddr_r[i] <= writeaddr_w[i];
+			port_r[i] <= port_w[i];
 		end
+		sport_r <= sport_w;
+		rport_r <= rport_w;
 	end
 end
 
