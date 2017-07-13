@@ -14,8 +14,10 @@ module collector(
 	output[7:0] o_D,
 	output WE,
 	output RE,
+
 	//cnotroller
-	input[7:0] i_inst,
+	input i_avmclk,
+	input[15:0] i_inst,
 	input i_set
 	);
 //parameters
@@ -190,7 +192,7 @@ always@(*) begin
 			else
 				ctrl_w[i] = ctrl_r[i];
 		end
-		state_w = ADDR;
+		state_w = i_set? ADDR : DATA;
 	end
 end
 //sequential
@@ -204,12 +206,6 @@ always@(posedge i_clk or negedge i_rst) begin
 			for(j = 0; j < 10;j = j + 1) begin
 				readaddr_r[i * 10 + j] <= offset[j];
 			end
-		end
-		for(i = 0; i < 10; i = i + 1) begin
-			ctrl_r[i] <= 16'b0000001111111111;
-		end
-		for(i = 10; i < 30; i = i + 1) begin
-			ctrl_r[i] <= 16'd1;
 		end
 		sport_r <= 0;
 		rport_r <= 0;
@@ -232,11 +228,25 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 100; i = i + 1) begin
 			readaddr_r[i] <= readaddr_w[i];
 		end
-		for(i = 0; i < 30; i = 1 + 1) begin
-			ctrl_r[i] <= ctrl_w[i];
-		end
 		sport_r <= sport_w;
 		rport_r <= rport_w;
 	end
 end
+
+always@(posedge i_avmclk or negedge i_rst) begin
+	if(!i_rst) begin
+		for(i = 0; i < 10; i = i + 1) begin
+			ctrl_r[i] <= 16'b0000001111111111;
+		end
+		for(i = 10; i < 30; i = i + 1) begin
+			ctrl_r[i] <= 16'd1;
+		end
+	end
+	else begin
+		for(i = 0; i < 30; i = i + 1) begin
+			ctrl_r[i] <= ctrl_w[i];
+		end
+	end
+end
+
 endmodule
