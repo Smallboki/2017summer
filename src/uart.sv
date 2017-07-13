@@ -9,15 +9,15 @@ module uart(
 	input i_waitrequest,
 
 	input[7:0] i_char,
-	output[7:0] o_char
+	output[15:0] o_char
 	);
 
 //parameters
+
 //logics
 
-
-
 //combinational
+
 //sequential
 
 endmodule

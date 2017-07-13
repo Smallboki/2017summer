@@ -21,7 +21,7 @@ module DE2_115(
 	inout [7:0] LCD_DATA,
 	output LCD_EN,
 	output LCD_ON,
-	output LCD_Ria IP User Guide
+	output LCD_IP,
 	output UART_CTS,
 	input UART_RTS,
 	input UART_RXD,

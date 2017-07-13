@@ -65,13 +65,14 @@ always@(*) begin
 			sample_cnt_w = 0;
 			finished = 0;
 			tmp = 0;
+			char_w = char_r;
 			if(i_rx == 1'b0)
 				state_w = DATA;
 			else
 				state_w = IDLE;
 		end
 		DATA: begin
-			finised = 0;
+			finished = 0;
 
 			if(sample_cnt_r < (cnt_r == 0 ? period_1_5:period)) begin
 				sample_cnt_w = sample_cnt_r + 1;

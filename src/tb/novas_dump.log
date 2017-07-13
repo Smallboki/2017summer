@@ -1,0 +1,115 @@
+ncsim(64) 12.20-s012
+Linux 3.16.0-38-generic #52~14.04.1-Ubuntu SMP Fri May 8 09:43:57 UTC 2015 x86_64
+CPU cores: 12
+Limit information:
+======================================
+cputime			unlimited
+filesize		unlimited
+datasize		unlimited
+stacksize		8192 kbytes
+coredumpsize	0 kbytes
+memoryuse		unlimited
+vmemoryuse		unlimited
+descriptors		1024
+memorylocked	64 kbytes
+maxproc			257163
+======================================
+(Special)Runtime environment variables:
+
+Runtime environment variables:
+USER=team12
+LOGNAME=team12
+HOME=/home/team12
+PATH=/opt/CAD/INCISIV/cur/tools/bin/64bit:/opt/CAD/verdi/cur/bin:/opt/CAD/verdi/cur/nLint/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/CAD/INCISIV/cur/tools/dfII/bin:/opt/CAD/INCISIV/cur/tools/vtools/vfault/bin:/opt/CAD/INCISIV/cur/tools/bin
+MAIL=/var/mail/team12
+SHELL=/bin/zsh
+SSH_CLIENT=220.132.86.14 65283 12345
+SSH_CONNECTION=220.132.86.14 65283 192.168.163.250 12345
+SSH_TTY=/dev/pts/2
+TERM=xterm
+DISPLAY=localhost:10.0
+XDG_SESSION_COOKIE=571dd7728312820a3245d4005631da4c-1499907742.392128-827647169
+XDG_SESSION_ID=3157
+XDG_RUNTIME_DIR=/run/user/1013
+LANG=en_US.UTF-8
+LC_NUMERIC=zh_TW.UTF-8
+LC_MONETARY=zh_TW.UTF-8
+LC_PAPER=zh_TW.UTF-8
+LC_NAME=zh_TW.UTF-8
+LC_ADDRESS=zh_TW.UTF-8
+LC_TELEPHONE=zh_TW.UTF-8
+LC_MEASUREMENT=zh_TW.UTF-8
+LC_IDENTIFICATION=zh_TW.UTF-8
+SHLVL=1
+PWD=/home/team12/2017summer/src/tb
+OLDPWD=/home/team12/2017summer/src
+SYNOPSYS_PATH=/opt/CAD
+CADENCE_PATH=/opt/CAD
+SPRING_PATH=/opt/CAD
+MENTOR_PATH=/opt/CAD
+LD_LIBRARY_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:/opt/CAD/verdi/cur/etc/lib/libstdc++/LINUX64/::/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib
+INCA_64BIT=
+LM_LICENSE_FILE=:5280@lsntu:26585@lsntu
+SHLIB_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:
+USE_PIPE=1
+_=/opt/CAD/INCISIV/cur/tools/bin/ncverilog
+/home/team12/2017summer/src/tb/INCA_libs/irun.lnx8664.12.20.nc/svpp.ts
+CDS_ARCH=lnx86
+NCRUNMODE=ncverilog:./INCA_libs/irun.lnx8664.12.20.nc
+IRUNBATCH=FALSE
+IMPERAS_PORT_FILE=.vsp_ovp_gdb_port
+TCL_LIBRARY=/opt/CAD/INCISIV/cur/tools/inca/files/tcl/library
+Runtime command line arguments:
+argv[0]=ncverilog
+argv[1]=char_r_tb.sv
+argv[2]=../char_r.sv
+argv[3]=+access+r
+66 profile - 100
+          CPU/Mem usage: 0.030 sys,  0.030 user,  85.83M sys,  0.00M vm
+67 VC callback profile - scalar:0 vector:0
+68 Thu Jul 13 11:41:31 2017
+69 pliAppInit
+70 *Verdi3* : Enable Parallel Dumping.
+71 pliAppMiscSet: New Sim Round
+72 LIBSSCORE=found /opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/libsscore_ius122.so through $LD_LIBRARY_PATH setting.
+73 argv[0]: char_r.fsdb
+74 Catch signal 11. Stack trace follows:
+stack trace not available75 FSDB Dumper for IUS, Release Verdi3_2013.07, Linux x86_64/64bit, 07/04/2013
+76 (C) 1996 - 2013 by Synopsys, Inc.
+77 sps_call_fsdbDumpfile at 0 : /home/team12/2017summer/src/tb/char_r_tb.sv(27)
+78 argv[0]: char_r.fsdb
+79 *Verdi3* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
+80 *Verdi3* : Create FSDB file 'char_r.fsdb'
+81 sps_call_fsdbDumpvars at 0 : /home/team12/2017summer/src/tb/char_r_tb.sv(28)
+82 *Verdi3* : Begin traversing the scopes, layer (0).
+83 *Verdi3* : End of traversing.
+84 fsdbDumpvars traverse var: profile - 
+          CPU/Mem usage: 0.030 sys,  0.040 user,  229.90M sys,  0.00M vm
+                   incr: 0.000 sys,  0.010 user,  4.23M sys,  0.00M vm
+                   accu: 0.000 sys,  0.010 user,  4.23M sys,  0.00M vm
+              accu incr: 0.000 sys,  0.010 user,  4.23M sys,  0.00M vm
+
+          Count usage: 30 var,  30 idcode,  30 callback
+                 incr: 30 var,  30 idcode,  30 callback
+                 accu: 30 var,  30 idcode,  30 callback
+            accu incr: 30 var,  30 idcode,  30 callback
+85 VC callback profile - scalar:0 vector:0
+86 Thu Jul 13 11:41:31 2017
+87 fsdbDumpvars: profile - 
+          CPU/Mem usage: 0.030 sys,  0.040 user,  230.95M sys,  0.00M vm
+                   incr: 0.000 sys,  0.000 user,  1.05M sys,  0.00M vm
+                   accu: 0.000 sys,  0.010 user,  5.28M sys,  0.00M vm
+              accu incr: 0.000 sys,  0.000 user,  1.05M sys,  0.00M vm
+
+          Count usage: 30 var,  30 idcode,  30 callback
+                 incr: 0 var,  0 idcode,  0 callback
+                 accu: 30 var,  30 idcode,  30 callback
+            accu incr: 0 var,  0 idcode,  0 callback
+88 VC callback profile - scalar:12 vector:18
+89 Thu Jul 13 11:41:31 2017
+90 End of simulation at 1840000
+91 VC callback profile - scalar:73996 vector:33663
+92 Thu Jul 13 11:41:31 2017
+93 Parallel profile    -  Flush:2 ProduceWait:2 ConsumerWait:2 BlockUsed:2
+94 SimExit
+95 Sim process exit

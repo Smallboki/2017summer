@@ -1,0 +1,7 @@
+//
+// File created by:  ncverilog
+// Do not modify this file
+//
+char_r_tb.sv
+../char_r.sv
++access+r
