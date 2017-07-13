@@ -1,12 +1,12 @@
 module receiver(
 	input i_clk,
-	input i_rst
+	input i_rst,
 
 	input i_read,
 	output o_ready,
 	output[7:0] o_D,
 
-	input[2:0] i_baud,
+	input[15:0] i_baud,
 	input i_rx,
 	output o_used
 	);
@@ -19,7 +19,7 @@ integer i;
 
 enum {UNUSED, USED} state_r,state_w;
 
-logic[7:0] D_w[2:0],D_r[2:0];
+logic[7:0] D_w[7:0],D_r[7:0];
 logic[2:0] r_w,r_r,w_w,w_r;
 logic[7:0] char;
 logic[31:0] cnt_w,cnt_r;
@@ -27,7 +27,7 @@ logic finished,state;
 
 //submodules
 
-char_r zchar_r(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_rx(i_rx),.o_char(char),.o_finished(finished),.o_state(state));
+char_r zchar_r(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[2:0]),.i_rx(i_rx),.o_char(char),.o_finished(finished),.o_state(state));
 
 //combinatila;
 

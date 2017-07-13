@@ -1,7 +1,7 @@
 module char_r(
 	input i_clk,//23040000Hz
 	input i_rst,
-	input[15:0] i_baud,
+	input[2:0] i_baud,
 	input i_rx,
 	output[7:0] o_char,
 	output o_finished,
@@ -13,7 +13,7 @@ module char_r(
 
 logic[7:0] char_r,char_w,tmp;
 enum { IDLE, DATA, STOP } state_r,state_w;
-logic[2:0] cnt_r,cnt_w;
+logic[3:0] cnt_r,cnt_w;
 logic[8:0] sample_cnt_w,sample_cnt_r;
 logic finished;
 logic [12:0] period;
@@ -26,7 +26,7 @@ assign o_finished = finished;
 assign o_state = state_r == IDLE? 0:1;
 
 always@(*) begin
-	case(i_baud[2:0])
+	case(i_baud)
 		0: begin//230400Hz
 			period = 100;
 			period_1_5 = 150;
@@ -61,7 +61,7 @@ end
 always@(*) begin
 	case(state_r)
 		IDLE: begin
-			cnt_w = 3'd0;
+			cnt_w = 4'd0;
 			sample_cnt_w = 0;
 			finished = 0;
 			tmp = 0;
@@ -82,12 +82,12 @@ always@(*) begin
 			end
 			else begin
 				sample_cnt_w = 0;
-				cnt_w = cnt_r < 7? cnt_r + 1 : 0;
+				cnt_w = (cnt_r == 9)? 0 : cnt_r + 1;
 				tmp = char_r >> 1;
-				char_w = {i_rx,tmp[6:0]};
+				char_w = cnt_r[3] == 1? char_r : {i_rx,tmp[6:0]};
 			end
 
-			if(cnt_r == 3'd7) begin
+			if(cnt_r == 9) begin
 				state_w = STOP;
 			end
 			else begin
@@ -96,7 +96,7 @@ always@(*) begin
 		end
 		STOP: begin
 			tmp = 0;
-			cnt_w = 3'd0;
+			cnt_w = 4'd0;
 			sample_cnt_w = 0;
 			state_w = IDLE;
 			finished = 1;
@@ -110,7 +110,7 @@ end
 always@(posedge i_clk or negedge i_rst) begin
 	if(!i_rst) begin
 		char_r <= 7'd0;
-		cnt_r <= 3'd0;
+		cnt_r <= 4'd0;
 		state_r <= IDLE;
 		sample_cnt_r <= 1;
 	end

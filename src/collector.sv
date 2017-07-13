@@ -134,18 +134,27 @@ always@(*) begin
 				state_w = SEND;
 			for(i = 0; i < 10; i = i + 1) begin
 				portmap = ctrl_r[i];
-				if(sport_r == i) begin
+				if(sport_r == i && !full[i]) begin
 					for(j = 0; j < 10; j = j + 1) begin
 						if(port_r[i] == j) begin
-							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j] < offset[i] + 1024?readaddr_r[i * 10 + j] : offset[j];
+							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j] < offset[i] + 1024?readaddr_r[i * 10 + j]+1:offset[j];
+						end
+						else begin
+							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j];
 						end
 					end
-					if(used[port_r[i]] && !(i_D == 8'ha) && portmap[port_r[i]]) begin
+
+					if(used[port_r[i]] && portmap[port_r[i]]) begin
 						write[i] = 1;
-						port_w[i] = port_r[i];
 					end
 					else begin
 						write[i] = 0;
+					end
+
+					if(used[port_r[i]] && !(i_D == 8'ha) && portmap[port_r[i]]) begin
+						port_w[i] = port_r[i];
+					end
+					else begin
 						port_w[i] = port_r[i] < 9? port_r[i] + 1 : 0;
 					end
 				end

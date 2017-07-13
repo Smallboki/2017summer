@@ -1,0 +1,81 @@
+wvSetPosition -win $_nWave1 {("G1" 0)}
+wvOpenFile -win $_nWave1 {/home/team12/2017summer/src/tb/char_r.fsdb}
+wvGetSignalOpen -win $_nWave1
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb/zchar_r"
+wvSetPosition -win $_nWave1 {("G1" 7)}
+wvSetPosition -win $_nWave1 {("G1" 7)}
+wvAddSignal -win $_nWave1 -clear
+wvAddSignal -win $_nWave1 -group {"G1" \
+{/char_r_tb/dclk} \
+{/char_r_tb/sclk} \
+{/char_r_tb/D\[7:0\]} \
+{/char_r_tb/rst} \
+{/char_r_tb/zchar_r/char_r\[7:0\]} \
+{/char_r_tb/zchar_r/i_rx} \
+{/char_r_tb/zchar_r/o_finished} \
+}
+wvAddSignal -win $_nWave1 -group {"G2" \
+}
+wvSelectSignal -win $_nWave1 {( "G1" 7 )} 
+wvSetPosition -win $_nWave1 {("G1" 7)}
+wvGetSignalClose -win $_nWave1
+wvZoomOut -win $_nWave1
+wvZoomOut -win $_nWave1
+wvGetSignalOpen -win $_nWave1
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb/zchar_r"
+wvSetPosition -win $_nWave1 {("G1" 8)}
+wvSetPosition -win $_nWave1 {("G1" 8)}
+wvAddSignal -win $_nWave1 -clear
+wvAddSignal -win $_nWave1 -group {"G1" \
+{/char_r_tb/dclk} \
+{/char_r_tb/sclk} \
+{/char_r_tb/D\[7:0\]} \
+{/char_r_tb/rst} \
+{/char_r_tb/zchar_r/char_r\[7:0\]} \
+{/char_r_tb/zchar_r/i_rx} \
+{/char_r_tb/zchar_r/o_finished} \
+{/char_r_tb/zchar_r/state_r\[31:0\]} \
+}
+wvAddSignal -win $_nWave1 -group {"G2" \
+}
+wvSelectSignal -win $_nWave1 {( "G1" 8 )} 
+wvSetPosition -win $_nWave1 {("G1" 8)}
+wvGetSignalClose -win $_nWave1
+wvZoomOut -win $_nWave1
+wvZoomIn -win $_nWave1
+wvZoomIn -win $_nWave1
+wvSelectGroup -win $_nWave1 {G2}
+wvSelectGroup -win $_nWave1 {G1}
+wvDisplayGridCount -win $_nWave1 -off
+wvGetSignalClose -win $_nWave1
+wvReloadFile -win $_nWave1
+wvSelectGroup -win $_nWave1 {G1}
+wvGetSignalOpen -win $_nWave1
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalClose -win $_nWave1
+wvSetCursor -win $_nWave1 146005.807003
+wvGetSignalOpen -win $_nWave1
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb/zchar_r"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalClose -win $_nWave1
+wvSelectGroup -win $_nWave1 {G2}
+wvDisplayGridCount -win $_nWave1 -off
+wvGetSignalClose -win $_nWave1
+wvReloadFile -win $_nWave1
+wvSelectGroup -win $_nWave1 {G1}
+wvGetSignalOpen -win $_nWave1
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalClose -win $_nWave1
+wvSetCursor -win $_nWave1 253923.142613
+wvGetSignalOpen -win $_nWave1
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb/zchar_r"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb/zchar_r"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb"
+wvGetSignalSetScope -win $_nWave1 "/char_r_tb/zchar_r"
+wvGetSignalClose -win $_nWave1
+wvExit

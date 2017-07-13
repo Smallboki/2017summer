@@ -1,36 +1,41 @@
 ncverilog(64): 12.20-s012: (c) Copyright 1995-2013 Cadence Design Systems, Inc.
-TOOL:	ncverilog	12.20-s012: Started on Jul 13, 2017 at 11:41:30 CST
+TOOL:	ncverilog	12.20-s012: Started on Jul 13, 2017 at 16:17:29 CST
 ncverilog
-	char_r_tb.sv
-	../char_r.sv
+	char_t_tb.sv
+	../transmitter.sv
+	../char_t.sv
 	+access+r
-Recompiling... reason: file '../char_r.sv' is newer than expected.
-	expected: Thu Jul 13 11:24:15 2017
-	actual:   Thu Jul 13 11:41:25 2017
-file: ../char_r.sv
-	module worklib.char_r:sv
+Recompiling... reason: file './char_t_tb.sv' is newer than expected.
+	expected: Thu Jul 13 16:16:05 2017
+	actual:   Thu Jul 13 16:17:28 2017
+file: char_t_tb.sv
+	module worklib.char_t_tb:sv
 		errors: 0, warnings: 0
 		Caching library 'worklib' ....... Done
 	Elaborating the design hierarchy:
-	Building instance overlay tables: .................... Done
+	Building instance overlay tables: ......
+	$readmemh("data.bin",Data);
+	                        |
+ncelab: *W,MEMODR (./char_t_tb.sv,30|25): $readmem default memory order incompatible with IEEE1364.
+.............. Done
 	Generating native compiled code:
-		worklib.char_r:sv <0x3e5b0d59>
-			streams:   6, words:  6361
+		worklib.char_t_tb:sv <0x52c5849e>
+			streams:   6, words:  4307
 	Loading native compiled code:     .................... Done
 	Building instance specific data structures.
 	Design hierarchy summary:
 		                   Instances  Unique
-		Modules:                   2       2
-		Registers:                24      24
-		Scalar wires:              7       -
-		Vectored wires:            3       -
+		Modules:                   3       3
+		Registers:                38      38
+		Scalar wires:             10       -
+		Vectored wires:            5       -
 		Always blocks:             7       7
 		Initial blocks:            1       1
-		Cont. assignments:         1       3
+		Cont. assignments:         1       4
 		Pseudo assignments:        5       5
 		Simulation timescale:  100ps
-	Writing initial simulation snapshot: worklib.char_r_tb:sv
-Loading snapshot worklib.char_r_tb:sv .................... Done
+	Writing initial simulation snapshot: worklib.char_t_tb:sv
+Loading snapshot worklib.char_t_tb:sv .................... Done
 *Verdi3* Loading libsscore_ius122.so
 *Verdi3* : Enable Parallel Dumping.
 ncsim> source /opt/CAD/INCISIV/cur/tools/inca/files/ncsimrc
@@ -38,20 +43,10 @@ ncsim> run
 FSDB Dumper for IUS, Release Verdi3_2013.07, Linux x86_64/64bit, 07/04/2013
 (C) 1996 - 2013 by Synopsys, Inc.
 *Verdi3* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
-*Verdi3* : Create FSDB file 'char_r.fsdb'
+*Verdi3* : Create FSDB file 'char_t.fsdb'
 *Verdi3* : Begin traversing the scopes, layer (0).
 *Verdi3* : End of traversing.
-$
-ˆ
-
-
-ž
-y
-‚
-i
-‚
-
-Simulation complete via $finish(1) at time 184 US + 0
-./char_r_tb.sv:36 	$finish;
+Simulation complete via $finish(1) at time 224030 NS + 0
+./char_t_tb.sv:47 	$finish;
 ncsim> exit
-TOOL:	ncverilog	12.20-s012: Exiting on Jul 13, 2017 at 11:41:31 CST  (total: 00:00:01)
+TOOL:	ncverilog	12.20-s012: Exiting on Jul 13, 2017 at 16:17:29 CST  (total: 00:00:00)

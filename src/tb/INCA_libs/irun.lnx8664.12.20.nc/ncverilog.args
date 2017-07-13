@@ -2,6 +2,7 @@
 // File created by:  ncverilog
 // Do not modify this file
 //
-char_r_tb.sv
-../char_r.sv
+char_t_tb.sv
+../transmitter.sv
+../char_t.sv
 +access+r

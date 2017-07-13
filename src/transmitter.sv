@@ -2,7 +2,7 @@ module transmitter(
 	input i_clk,
 	input i_rst,
 	input[7:0] i_D,
-	input i_baud,
+	input[15:0] i_baud,
 	input i_write,
 	output o_full,
 
@@ -22,7 +22,7 @@ logic full;
 
 //combinational
 
-char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud),.i_char(D),.i_start(start_r),.o_tx(o_tx),.o_finished(finished));
+char_t zchar_t(.i_clk(i_clk),.i_rst(i_rst),.i_baud(i_baud[2:0]),.i_char(D),.i_start(start_r),.o_tx(o_tx),.o_finished(finished));
 
 assign D = D_r[r_r];
 assign o_full = full;
@@ -31,7 +31,14 @@ always@(*) begin
 
 	start_r = ~(r_r == w_r);
 
-	if(i_write) begin
+	if((w_r + 3'd1) == r_r) begin
+		full = 1;
+	end
+	else begin
+		full = 0;
+	end
+
+	if(i_write && !full) begin
 		w_w = w_r + 3'b1;
 		for(i = 0; i < 8; i = i + 1) begin
 			if(w_r == i)
@@ -54,10 +61,6 @@ always@(*) begin
 		r_w = r_r;
 	end
 
-	if((w_w == r_w) && (w_r < r_r))
-		full = 1;
-	else
-		full = 0;
 end
 
 //sequential
@@ -69,7 +72,6 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 8; i = i + 1) begin
 			D_r[i] <= 0;
 		end
-		state_r <= EMPTY;
 	end
 	else begin
 		w_r <= w_w;
@@ -77,7 +79,6 @@ always@(posedge i_clk or negedge i_rst) begin
 		for(i = 0; i < 8; i = i + 1) begin
 			D_r[i] <= D_w[i];
 		end
-		state_r <= state_w;
 	end
 end
 
