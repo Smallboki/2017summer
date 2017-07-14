@@ -1,0 +1,39 @@
+ncverilog(64): 12.20-s012: (c) Copyright 1995-2013 Cadence Design Systems, Inc.
+TOOL:	ncverilog	12.20-s012: Started on Jul 14, 2017 at 17:50:02 CST
+ncverilog
+	collector.sv
+	transmitter.sv
+	receiver.sv
+	char_t.sv
+	char_r.sv
+Recompiling... reason: file './collector.sv' is newer than expected.
+	expected: Fri Jul 14 17:47:28 2017
+	actual:   Fri Jul 14 17:49:59 2017
+file: collector.sv
+	module worklib.collector:sv
+		errors: 0, warnings: 0
+		Caching library 'worklib' ....... Done
+	Elaborating the design hierarchy:
+	Building instance overlay tables: .................... Done
+	Generating native compiled code:
+		worklib.collector:sv <0x61552c9b>
+			streams:   0, words:     0
+	Loading native compiled code:     .................... Done
+	Building instance specific data structures.
+	Design hierarchy summary:
+		              Instances  Unique
+		Modules:             41       5
+		Registers:          521      80
+		Scalar wires:       166       -
+		Vectored wires:     101       -
+		Always blocks:      104      14
+		Cont. assignments:    0      27
+	Writing initial simulation snapshot: worklib.collector:sv
+Loading snapshot worklib.collector:sv .................... Done
+*Verdi3* Loading libsscore_ius122.so
+*Verdi3* : Enable Parallel Dumping.
+ncsim> source /opt/CAD/INCISIV/cur/tools/inca/files/ncsimrc
+ncsim> run
+ncsim: *W,RNQUIE: Simulation is complete.
+ncsim> exit
+TOOL:	ncverilog	12.20-s012: Exiting on Jul 14, 2017 at 17:50:02 CST  (total: 00:00:00)

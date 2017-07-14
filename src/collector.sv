@@ -1,5 +1,5 @@
-`define ADDRWIDTH
-`define DATAWIDTH
+`define ADDRWIDTH 23
+`define DATAWIDTH 32
 
 module collector(
 	input i_clk,//sampling frequency
@@ -45,9 +45,9 @@ enum {RECV,SEND} state_w,state_r;
 
 logic[9:0] ready,read,used;
 logic[10:0] write,full;
-logic[`ADDRWIDTH:0] readaddr_w[109:0],readaddr_r[109:0];
-logic[`ADDRWIDTH:0] writeaddr_w[9:0],writeaddr_r[9:0];
-logic[`ADDRWIDTH:0] addr;
+logic[`ADDRWIDTH - 1:0] readaddr_w[109:0],readaddr_r[109:0];
+logic[`ADDRWIDTH - 1:0] writeaddr_w[9:0],writeaddr_r[9:0];
+logic[`ADDRWIDTH - 1:0] addr;
 logic we_r,re_r;
 
 logic[3:0] rport_w,rport_r;
@@ -60,7 +60,7 @@ logic[`ADDRWIDTH:0] offset[9:0];
 	//controlunit
 enum {ADDR,DATA} cstate_w,cstate_r;
 
-logic[15:0] ctrl_w[29:0],ctrl_r[29:0];//0~9: portmap; 10~29: baud; 30: uart;
+logic[15:0] ctrl_w[30:0],ctrl_r[30:0];//0~9: portmap; 10~29: baud; 30: uart;
 logic[15:0] portmap;
 logic[15:0] caddr_w,caddr_r;
 //submodules
@@ -89,7 +89,6 @@ transmitter xtransmitter_9(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[
 
 //combinational
 
-assign o_data = storage_r[0];
 assign rready = &ready;
 assign WE = we_r;
 assign RE = re_r;
@@ -106,7 +105,7 @@ assign offset[8] = OFFSET8;
 assign offset[9] = OFFSET9;
 //from/to uart
 assign full[10] = i_full;
-assign o_write = write[[10];
+assign o_write = write[10];
 assign o_char = i_D;
 //receive & transmmit
 always@(*) begin
@@ -191,7 +190,10 @@ always@(*) begin
 			ctrl_w[i] = ctrl_r[i];
 		end
 		caddr_w = i_inst;
-		state_w = i_set? DATA : ADDR;
+		if(i_set)
+			cstate_w = DATA;
+		else
+			cstate_w = ADDR;
 	end
 	else begin
 		for(i = 0; i < 29; i = i + 1) begin
@@ -200,7 +202,7 @@ always@(*) begin
 			else
 				ctrl_w[i] = ctrl_r[i];
 		end
-		state_w = i_set? ADDR : DATA;
+		cstate_w = i_set ? ADDR : DATA;
 	end
 end
 //sequential

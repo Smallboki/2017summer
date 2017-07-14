@@ -1,0 +1,77 @@
+ncsim(64) 12.20-s012
+Linux 3.16.0-38-generic #52~14.04.1-Ubuntu SMP Fri May 8 09:43:57 UTC 2015 x86_64
+CPU cores: 12
+Limit information:
+======================================
+cputime			unlimited
+filesize		unlimited
+datasize		unlimited
+stacksize		8192 kbytes
+coredumpsize	0 kbytes
+memoryuse		unlimited
+vmemoryuse		unlimited
+descriptors		1024
+memorylocked	64 kbytes
+maxproc			257163
+======================================
+(Special)Runtime environment variables:
+
+Runtime environment variables:
+USER=team12
+LOGNAME=team12
+HOME=/home/team12
+PATH=/opt/CAD/INCISIV/cur/tools/bin/64bit:/opt/CAD/verdi/cur/bin:/opt/CAD/verdi/cur/nLint/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/CAD/INCISIV/cur/tools/dfII/bin:/opt/CAD/INCISIV/cur/tools/vtools/vfault/bin:/opt/CAD/INCISIV/cur/tools/bin
+MAIL=/var/mail/team12
+SHELL=/bin/zsh
+SSH_CLIENT=220.132.86.14 49246 12345
+SSH_CONNECTION=220.132.86.14 49246 192.168.163.250 12345
+SSH_TTY=/dev/pts/2
+TERM=xterm
+DISPLAY=localhost:10.0
+XDG_SESSION_COOKIE=571dd7728312820a3245d4005631da4c-1500011568.840687-2073060628
+XDG_SESSION_ID=3229
+XDG_RUNTIME_DIR=/run/user/1013
+LANG=en_US.UTF-8
+LC_NUMERIC=zh_TW.UTF-8
+LC_MONETARY=zh_TW.UTF-8
+LC_PAPER=zh_TW.UTF-8
+LC_NAME=zh_TW.UTF-8
+LC_ADDRESS=zh_TW.UTF-8
+LC_TELEPHONE=zh_TW.UTF-8
+LC_MEASUREMENT=zh_TW.UTF-8
+LC_IDENTIFICATION=zh_TW.UTF-8
+SHLVL=1
+PWD=/home/team12/2017summer/src
+OLDPWD=/home/team12/2017summer
+SYNOPSYS_PATH=/opt/CAD
+CADENCE_PATH=/opt/CAD
+SPRING_PATH=/opt/CAD
+MENTOR_PATH=/opt/CAD
+LD_LIBRARY_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:/opt/CAD/verdi/cur/etc/lib/libstdc++/LINUX64/::/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib
+INCA_64BIT=
+LM_LICENSE_FILE=:5280@lsntu:26585@lsntu
+SHLIB_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:
+USE_PIPE=1
+_=/opt/CAD/INCISIV/cur/tools/bin/ncverilog
+/home/team12/2017summer/src/INCA_libs/irun.lnx8664.12.20.nc/svpp.ts
+CDS_ARCH=lnx86
+NCRUNMODE=ncverilog:./INCA_libs/irun.lnx8664.12.20.nc
+IRUNBATCH=FALSE
+IMPERAS_PORT_FILE=.vsp_ovp_gdb_port
+TCL_LIBRARY=/opt/CAD/INCISIV/cur/tools/inca/files/tcl/library
+Runtime command line arguments:
+argv[0]=ncverilog
+argv[1]=collector.sv
+argv[2]=transmitter.sv
+argv[3]=receiver.sv
+argv[4]=char_t.sv
+argv[5]=char_r.sv
+68 profile - 100
+          CPU/Mem usage: 0.020 sys,  0.030 user,  85.86M sys,  0.00M vm
+69 VC callback profile - scalar:0 vector:0
+70 Fri Jul 14 17:50:02 2017
+71 pliAppInit
+72 *Verdi3* : Enable Parallel Dumping.
+73 pliAppMiscSet: New Sim Round
+74 LIBSSCORE=found /opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/libsscore_ius122.so through $LD_LIBRARY_PATH setting.
+75 Sim process exit
