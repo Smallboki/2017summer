@@ -25,20 +25,21 @@ localparam OFFSET2 = 8;
 integer i;
 //logics
 
-enum {READ,WRITE,RHOLD,WHOLD} state_w,state_r;
+enum {IDLE,READ,WRITE,RHOLD,WHOLD} state_w,state_r;
 
 logic[4:0] addr;
 logic[7:0] char_r[15:0],char_w[15:0];
 logic[4:0] r_r,r_w;
 logic[4:0] w_r,w_w;
+logic write,read;
 
 logic[15:0] setdata_w,setdata_r;
 logic[1:0] cnt_r,cnt_w;
 logic setting;
 
 //combinational
-assign o_write = ~i_mode;
-assign o_read = i_mode;
+assign o_write = write;
+assign o_read = read;
 assign o_address = addr;
 assign o_writedata = char_r[r_r];
 
@@ -74,8 +75,24 @@ always@(*) begin
 	setting = 0;
 	r_w = r_r;
 	case(state_r)
+		IDLE: begin
+			addr = OFFSET2;
+			write = 0;
+			read = 0;
+			if(!i_mode && (r_r != w_r)) begin
+				state_w = WHOLD;
+			end
+			else if(i_mode) begin
+				state_w = RHOLD;
+			end
+			else begin
+				state_w = IDLE;
+			end
+		end
 		RHOLD: begin
 			addr = OFFSET2;
+			read = 1;
+			write = 0;
 			if(i_mode) begin
 				if(i_waitrequest) begin
 					state_w = state_r;
@@ -88,11 +105,13 @@ always@(*) begin
 				end
 			end
 			else begin
-				state_w = WHOLD;
+				state_w = IDLE;
 			end
 		end
 		READ: begin
 			addr = OFFSET0;
+			read = 1;
+			write = 0;
 			if(i_mode) begin
 				if(i_waitrequest) begin
 					state_w = state_r;
@@ -105,11 +124,13 @@ always@(*) begin
 				end
 			end
 			else begin
-				state_w = WHOLD;
+				state_w = IDLE;
 			end
 		end
 		WHOLD: begin
 			addr = OFFSET2;
+			read = 0;
+			write = 1;
 			if(!i_mode) begin
 				if(i_waitrequest) begin
 					state_w = state_r;
@@ -129,6 +150,8 @@ always@(*) begin
 		end
 		WRITE: begin
 			addr = OFFSET1;
+			read = 0;
+			write = 1;
 			if(!i_mode) begin
 				if(i_waitrequest) begin
 					state_w = state_r;
@@ -150,8 +173,24 @@ end
 
 always@(posedge i_clk or i_rst) begin
 	if(!i_rst) begin
+		state_r <= IDLE;
+		for(i = 0; i < 16; i = i + 1) begin
+			char_r <= 0;
+		end
+		r_r <= 0;
+		w_r <= 0;
+		setdata_r <= 0;
+		cnt_r <= 0;
 	end
 	else begin
+		state_r <= state_w;
+		for(i = 0; i < 16; i = i + 1) begin
+			char_r <= char_w;
+		end
+		r_r <= r_w;
+		w_r <= w_w;
+		setdata_r <= setdata_w;
+		cnt_r <= cnt_w;
 	end
 end
 
