@@ -15,10 +15,14 @@ module collector(
 	output WE,
 	output RE,
 
-	//cnotroller
+	// to/from uart
 	input i_avmclk,
 	input[15:0] i_inst,
-	input i_set
+	input i_set,
+
+	output o_write,
+	input i_full,
+	output o_char
 	);
 //parameters
 
@@ -39,15 +43,16 @@ localparam OFFSET9 = 9216;
 	//receiver & transmitter
 enum {RECV,SEND} state_w,state_r;
 
-logic[9:0] ready,write,read,full,used;
-logic[`ADDRWIDTH:0] readaddr_w[99:0],readaddr_r[99:0];
+logic[9:0] ready,read,used;
+logic[10:0] write,full;
+logic[`ADDRWIDTH:0] readaddr_w[109:0],readaddr_r[109:0];
 logic[`ADDRWIDTH:0] writeaddr_w[9:0],writeaddr_r[9:0];
 logic[`ADDRWIDTH:0] addr;
 logic we_r,re_r;
 
 logic[3:0] rport_w,rport_r;
 logic[3:0] sport_w,sport_r;
-logic[3:0] port_w[9:0],port_r[9:0];
+logic[3:0] port_w[10:0],port_r[10:0];
 
 logic rready;
 logic[`ADDRWIDTH:0] offset[9:0];
@@ -55,7 +60,7 @@ logic[`ADDRWIDTH:0] offset[9:0];
 	//controlunit
 enum {ADDR,DATA} cstate_w,cstate_r;
 
-logic[15:0] ctrl_w[29:0],ctrl_r[29:0];//0~9: portmap; 10~29: baud
+logic[15:0] ctrl_w[29:0],ctrl_r[29:0];//0~9: portmap; 10~29: baud; 30: uart;
 logic[15:0] portmap;
 logic[15:0] caddr_w,caddr_r;
 //submodules
@@ -99,7 +104,10 @@ assign offset[6] = OFFSET6;
 assign offset[7] = OFFSET7;
 assign offset[8] = OFFSET8;
 assign offset[9] = OFFSET9;
-
+//from/to uart
+assign full[10] = i_full;
+assign o_write = write[[10];
+assign o_char = i_D;
 //receive & transmmit
 always@(*) begin
 	case(state_r)
@@ -134,7 +142,7 @@ always@(*) begin
 				state_w = RECV;
 			else
 				state_w = SEND;
-			for(i = 0; i < 10; i = i + 1) begin
+			for(i = 0; i < 11; i = i + 1) begin
 				portmap = ctrl_r[i];
 				if(sport_r == i && !full[i]) begin
 					for(j = 0; j < 10; j = j + 1) begin
@@ -168,11 +176,11 @@ always@(*) begin
 					write[i] = 0;
 				end
 			end
-			addr = readaddr_r[sport_r * 10 + port_r[sport_r]];
+			addr = readaddr_r[sport_r * 10 + port_r[sport_r]];//tsan tsan
 			re_r = 1;
 			we_r = 0;
 			rport_w = rport_r;
-			sport_w = sport_r == 9? 0: sport_r + 1;
+			sport_w = sport_r == 10? 0: sport_r + 1;
 		end
 	endcase
 end
@@ -241,9 +249,10 @@ always@(posedge i_avmclk or negedge i_rst) begin
 		for(i = 10; i < 30; i = i + 1) begin
 			ctrl_r[i] <= 16'd1;
 		end
+		ctrl_r[30] <= 16'b0000001111111111;
 	end
 	else begin
-		for(i = 0; i < 30; i = i + 1) begin
+		for(i = 0; i < 31; i = i + 1) begin
 			ctrl_r[i] <= ctrl_w[i];
 		end
 	end

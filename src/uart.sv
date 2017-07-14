@@ -1,6 +1,6 @@
 module uart(
 	input i_rst,
-	input i_clk,
+	input i_clk,//avm_clk
 	output[4:0] o_address,
 	output o_read,
 	input[31:0] i_readdata,
@@ -9,6 +9,8 @@ module uart(
 	input i_waitrequest,
 
 	input i_mode,//0: write, 1: read
+
+	input i_sclk,//sampling frequency
 	input i_write,
 	output o_full,
 	input[7:0] i_char,
@@ -174,23 +176,30 @@ end
 always@(posedge i_clk or i_rst) begin
 	if(!i_rst) begin
 		state_r <= IDLE;
-		for(i = 0; i < 16; i = i + 1) begin
-			char_r <= 0;
-		end
 		r_r <= 0;
-		w_r <= 0;
 		setdata_r <= 0;
 		cnt_r <= 0;
 	end
 	else begin
 		state_r <= state_w;
+		r_r <= r_w;
+		setdata_r <= setdata_w;
+		cnt_r <= cnt_w;
+	end
+end
+
+always@(posedge i_sclk or i_rst) begin
+	if(!i_rst) begin
+		w_r <= 0;
+		for(i = 0; i < 16; i = i + 1) begin
+			char_r <= 0;
+		end
+	end
+	else begin
+		w_r <= w_w;
 		for(i = 0; i < 16; i = i + 1) begin
 			char_r <= char_w;
 		end
-		r_r <= r_w;
-		w_r <= w_w;
-		setdata_r <= setdata_w;
-		cnt_r <= cnt_w;
 	end
 end
 
