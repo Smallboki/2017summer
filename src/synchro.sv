@@ -20,7 +20,6 @@ integer i;
 //logic
 enum {IDLE,IDT,DATA,CHECK} state_w,state_r;
 
-logic[13:0] deg_w,deg_r;
 logic[7:0] cnt_w,cnt_r;
 logic[7:0] char_w[7:0],char_r[7:0];
 logic[2:0] r_w,r_r,w_w,w_r;
@@ -31,11 +30,19 @@ logic check;
 
 logic[23:0] SI_w,SI_r;
 logic[3:0] pos;
+
+logic[21:0] binary_w,binary_r;
+logic[13:0] edg,deg_w,deg_r;
+logic finished;
+//submodule
+
+binary2deg xbinary2deg(.i_clk(i_clk),.i_rst(i_rst),.i_start(check),.i_binary(),.o_deg(deg),.o_finished(finished));
+
 //combinational
 
-assign o_deg = deg_r;
 assign o_full = ((w_r + 1) == r_r)? 1 : 0;
 assign o_check = check;
+assign o_deg = deg_r;
 
 always@(*) begin
 	for(i = 0; i < 8; i = i + 1) begin
@@ -66,6 +73,13 @@ always@(*) begin
 end
 
 always@(*) begin
+	if(finished)
+		deg_w = deg;
+	else
+		deg_w = deg_r;
+end
+
+always@(*) begin
 	check = 0;
 	checksum_w = checksum_r;
 	SI_w = SI_r;
@@ -79,7 +93,6 @@ always@(*) begin
 					state_w = state_r;
 				end
 				cnt_w = 0;
-				deg_w = deg_r;
 			end
 			IDT: begin
 				if(cnt_r > 1) begin
@@ -97,7 +110,6 @@ always@(*) begin
 					cnt_w = 0;
 				end
 				check_w = check_r ^ char;
-				deg_w = deg_r;
 			end
 			DATA: begin
 				if(char == "*") begin
@@ -120,7 +132,6 @@ always@(*) begin
 					else begin
 					end
 				end
-				deg_w = deg_r;
 			end
 			CHECK: begin
 				if(char == 8'hd) begin
@@ -155,7 +166,6 @@ always@(*) begin
 		cnt_w = cnt_r;
 		checksum_w = checksum_r;
 		check_w = check_r;
-		deg_w = deg_r;
 	end
 end
 
@@ -164,13 +174,31 @@ end
 always@(posedge i_clk or negedge i_rst) begin
 	if(!i_rst) begin
 		state_r <= IDLE;
-		deg_r <= 0;
 		cnt_r <= 0;
+		deg_r <= 0;
+		checksum_r <= 0;
+		check_r <= 0;
+		SI_r <= 0;
+		r_r <= 0;
+		w_r <= 0;
+		binary_r <= 0;
+		for(i = 0; i < 8; i = i + 1) begin
+			char_r[i] <= 0;
+		end
 	end
 	else begin
 		state_r <= state_w;
-		deg_r <= deg_w;
 		cnt_r <= cnt_w;
+		deg_r <= deg_w;
+		checksum_r <= checksum_w;
+		check_r <= check_r;
+		SI_r <= SI_w;
+		r_r <= r_w;
+		w_r <= w_r;
+		binary_r <= binary_w;
+		for(i = 0; i < 8; i = i + 1) begin
+			char_r[i] <= char_w[i];
+		end
 	end
 end
 endmodule
