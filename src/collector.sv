@@ -38,6 +38,11 @@ localparam OFFSET7 = 7168;
 localparam OFFSET8 = 8192;
 localparam OFFSET9 = 9216;
 
+localparam I422 = 10;
+localparam O422 = 10;
+localparam OUART = 1;
+localparam OSYN = 0;
+localparam OETHER = 0;
 //logics
 
 	//receiver & transmitter
@@ -60,7 +65,7 @@ logic[`ADDRWIDTH:0] offset[9:0];
 	//controlunit
 enum {ADDR,DATA} cstate_w,cstate_r;
 
-logic[15:0] ctrl_w[30:0],ctrl_r[30:0];//0~9: portmap; 10~29: baud; 30: uart;
+logic[15:0] ctrl_w[I422 + I422 + O422 + OUART:0],ctrl_r[I422 + I422 + O422 + OUART:0];//0~9:422 portmap; 10~29: baud; 30: uart;
 logic[15:0] portmap;
 logic[15:0] caddr_w,caddr_r;
 //submodules
@@ -86,7 +91,7 @@ transmitter xtransmitter_6(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[
 transmitter xtransmitter_7(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[27]),.o_full(full[7]),.i_write(write[7]),.o_tx(o_tx[7]));
 transmitter xtransmitter_8(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[28]),.o_full(full[8]),.i_write(write[8]),.o_tx(o_tx[8]));
 transmitter xtransmitter_9(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[29]),.o_full(full[9]),.i_write(write[9]),.o_tx(o_tx[9]));
-
+//synchrp xsynchro ();
 //combinational
 
 assign rready = &ready;
@@ -177,7 +182,7 @@ always@(*) begin
 			end
 			addr = readaddr_r[sport_r * 10 + port_r[sport_r]];//tsan tsan
 			re_r = 1;
-			we_r = 0;
+			ystem::Threading
 			rport_w = rport_r;
 			sport_w = sport_r == 10? 0: sport_r + 1;
 		end
