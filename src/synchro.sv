@@ -18,7 +18,7 @@ module synchro(
 integer i;
 
 //logic
-enum {IDLE,IDT,DATA,CHECK} state_w,state_r;
+enum {IDLE,IDT,DATA,DEG,CHECK} state_w,state_r;
 
 logic[7:0] cnt_w,cnt_r;
 logic[7:0] char_w[7:0],char_r[7:0];
@@ -31,12 +31,15 @@ logic check;
 logic[23:0] SI_w,SI_r;
 logic[3:0] pos;
 
-logic[21:0] binary_w,binary_r;
+
+enum {INT,FRC} dstate_w,dstate_r;
+logic[63:0] decimal_w,decimal_r;
 logic[13:0] edg,deg_w,deg_r;
+logic[3:0] frccnt_w,frccnt_r;
 logic finished;
 //submodule
 
-binary2deg xbinary2deg(.i_clk(i_clk),.i_rst(i_rst),.i_start(check),.i_binary(),.o_deg(deg),.o_finished(finished));
+binary2deg xbinary2deg(.i_clk(i_clk),.i_rst(i_rst),.i_start(check),.i_decimal(decimal_r),.i_frccnt(frccnt_r),.o_deg(deg),.o_finished(finished));
 
 //combinational
 
@@ -83,6 +86,10 @@ always@(*) begin
 	check = 0;
 	checksum_w = checksum_r;
 	SI_w = SI_r;
+	for(i = 0; i < 16; i = i + 1) begin
+		decimal_w[i] = decimal_r[i];
+	end
+
 	if(w_r != r_r) begin
 		case(state_r)
 			IDLE: begin
@@ -112,6 +119,7 @@ always@(*) begin
 				check_w = check_r ^ char;
 			end
 			DATA: begin
+				tmp = char - "0";
 				if(char == "*") begin
 					state_w = CHECK;
 					cnt_w = 0;
@@ -126,12 +134,34 @@ always@(*) begin
 					state_w = state_r;
 					cnt_w = cnt_r;
 					check_w = check_r ^ char;
-					if(cnt_r == pos) begin
-						
+				end
+			end
+			DEG: begin
+				if(char == ".") begin
+					dstate_w = FRC;
+					state_w = state_r;
+					cnt_w = cnt_r;
+					frccnt_w = frccnt_r;
+				end
+				else if(char == ",") begin
+					dstate_w = INT;
+					state_w = DATA;
+					cnt_w = cnt_r;
+					frccnt_w = frccnt_r;
+				end
+				else begin
+					state_w = state_r;
+					dstate_w = state_r;
+					cnt_w = cnt_r;
+					if(dstate_r == FRC) begin
+						frccnt_w = frccnt_r + 1;
 					end
 					else begin
+						frccnt_w = frccnt_r;
 					end
 				end
+				check_w = check_r ^ char;
+				decimal_w = (decimal_r << 4) + {60'd0,tmp[3:0]};
 			end
 			CHECK: begin
 				if(char == 8'hd) begin
@@ -181,7 +211,7 @@ always@(posedge i_clk or negedge i_rst) begin
 		SI_r <= 0;
 		r_r <= 0;
 		w_r <= 0;
-		binary_r <= 0;
+		decimal_r <= 0;
 		for(i = 0; i < 8; i = i + 1) begin
 			char_r[i] <= 0;
 		end
@@ -195,7 +225,7 @@ always@(posedge i_clk or negedge i_rst) begin
 		SI_r <= SI_w;
 		r_r <= r_w;
 		w_r <= w_r;
-		binary_r <= binary_w;
+		decimal_r <= deciaml_w;
 		for(i = 0; i < 8; i = i + 1) begin
 			char_r[i] <= char_w[i];
 		end
