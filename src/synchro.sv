@@ -4,9 +4,8 @@ module synchro(
 	input i_clk,
 	input i_rst,
 
-	input[15:0] i_setting,
 	input i_write,
-	input i_char,
+	input[7:0] i_char,
 	output o_full,
 
 	output o_check,
@@ -56,6 +55,9 @@ always@(*) begin
 		w_w = w_r + 1;
 		char_w[w_r] = i_char;
 	end
+	else begin
+		w_w = w_r;
+	end
 
 	if(w_r != r_r) begin
 		char = char_r[r_r];
@@ -72,6 +74,9 @@ always@(*) begin
 		{"H","D","G"} : begin
 			pos = 1;
 		end
+		{"H","D","T"} : begin
+			pos = 1;
+		end
 	endcase
 end
 
@@ -86,10 +91,9 @@ always@(*) begin
 	check = 0;
 	checksum_w = checksum_r;
 	SI_w = SI_r;
-	for(i = 0; i < 16; i = i + 1) begin
-		decimal_w[i] = decimal_r[i];
-	end
-
+	decimal_w = decimal_r;
+	tmp = 0;
+	frccnt_w = frccnt_r;
 	if(w_r != r_r) begin
 		case(state_r)
 			IDLE: begin
@@ -102,24 +106,24 @@ always@(*) begin
 				cnt_w = 0;
 			end
 			IDT: begin
-				if(cnt_r > 1) begin
-					state_w = state_r;
-					cnt_w = cnt_r + 1;
-					SI_w = SI_r << 8 + {16'd0,char};
-				end
-				else if(cnt_r == 4) begin
+				if(cnt_r == 4) begin
 					state_w = DATA;
 					cnt_w = 0;
-					SI_w = SI_r << 8 + {16'd0,char};
+					SI_w = (SI_r << 8) + {16'd0,char};
+				end
+				else if(cnt_r > 1) begin
+					state_w = state_r;
+					cnt_w = cnt_r + 1;
+					SI_w = (SI_r << 8) + {16'd0,char};
 				end
 				else begin
 					state_w = state_r;
-					cnt_w = 0;
+					SI_w = SI_r;
+					cnt_w = cnt_r + 1;
 				end
 				check_w = check_r ^ char;
 			end
 			DATA: begin
-				tmp = char - "0";
 				if(char == "*") begin
 					state_w = CHECK;
 					cnt_w = 0;
@@ -127,8 +131,13 @@ always@(*) begin
 				end
 				else if(char == ",") begin
 					cnt_w = cnt_r + 1;
-					state_w = state_r;
 					check_w = check_r ^ char;
+					if(cnt_r == (pos - 1)) begin
+						state_w = DEG;
+					end
+					else begin
+						state_w = state_r;
+					end
 				end
 				else begin
 					state_w = state_r;
@@ -137,31 +146,34 @@ always@(*) begin
 				end
 			end
 			DEG: begin
+				tmp = char - "0";
 				if(char == ".") begin
 					dstate_w = FRC;
 					state_w = state_r;
 					cnt_w = cnt_r;
 					frccnt_w = frccnt_r;
+					decimal_w = (decimal_r << 4) + {60'd0,tmp[3:0]};
 				end
 				else if(char == ",") begin
 					dstate_w = INT;
 					state_w = DATA;
 					cnt_w = cnt_r;
 					frccnt_w = frccnt_r;
+					decimal_w = decimal_r;
 				end
 				else begin
 					state_w = state_r;
-					dstate_w = state_r;
+					dstate_w = dstate_r;
 					cnt_w = cnt_r;
+					decimal_w = (decimal_r << 4) + {60'd0,tmp[3:0]};
 					if(dstate_r == FRC) begin
-						frccnt_w = frccnt_r + 1;
+						frccnt_w = frccnt_r;
 					end
 					else begin
-						frccnt_w = frccnt_r;
+						frccnt_w = frccnt_r + 1;
 					end
 				end
 				check_w = check_r ^ char;
-				decimal_w = (decimal_r << 4) + {60'd0,tmp[3:0]};
 			end
 			CHECK: begin
 				if(char == 8'hd) begin
@@ -177,11 +189,11 @@ always@(*) begin
 				else begin
 					if((char > "/") && (char < ":")) begin
 						tmp = char - "0";
-						checksum_w = cnt == 0 ? {tmp[3:0],4'd0} : {checksum_r[7:4],tmp[3:0]};
+						checksum_w = cnt_r == 0 ? {tmp[3:0],4'd0} : {checksum_r[7:4],tmp[3:0]};
 					end
 					else if((char > "@") && (char < "G")) begin
 						tmp = char - "A";
-						checksum_w = cnt == 0 ? {tmp[3:0],4'd0} : {checksum_r[7:4],tmp[3:0]};
+						checksum_w = cnt_r == 0 ? {tmp[3:0],4'd0} : {checksum_r[7:4],tmp[3:0]};
 					end
 					else begin
 						checksum_w = checksum_r;
@@ -204,6 +216,7 @@ end
 always@(posedge i_clk or negedge i_rst) begin
 	if(!i_rst) begin
 		state_r <= IDLE;
+		dstate_r <= INT;
 		cnt_r <= 0;
 		deg_r <= 0;
 		checksum_r <= 0;
@@ -212,20 +225,23 @@ always@(posedge i_clk or negedge i_rst) begin
 		r_r <= 0;
 		w_r <= 0;
 		decimal_r <= 0;
+		frccnt_r <= 0;
 		for(i = 0; i < 8; i = i + 1) begin
 			char_r[i] <= 0;
 		end
 	end
 	else begin
 		state_r <= state_w;
+		dstate_r <= dstate_w;
 		cnt_r <= cnt_w;
 		deg_r <= deg_w;
 		checksum_r <= checksum_w;
-		check_r <= check_r;
+		check_r <= check_w;
 		SI_r <= SI_w;
 		r_r <= r_w;
-		w_r <= w_r;
-		decimal_r <= deciaml_w;
+		w_r <= w_w;
+		decimal_r <= decimal_w;
+		frccnt_r <= frccnt_w;
 		for(i = 0; i < 8; i = i + 1) begin
 			char_r[i] <= char_w[i];
 		end

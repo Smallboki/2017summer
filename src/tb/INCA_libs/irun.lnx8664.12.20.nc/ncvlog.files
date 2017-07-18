@@ -2,6 +2,6 @@
 // File created by:  ncverilog
 // Do not modify this file
 //
-/home/team12/2017summer/src/tb/char_t_tb.sv
-/home/team12/2017summer/src/transmitter.sv
-/home/team12/2017summer/src/char_t.sv
+/home/team12/2017summer/src/tb/synchro_tb.sv
+/home/team12/2017summer/src/synchro.sv
+/home/team12/2017summer/src/binary2deg.sv

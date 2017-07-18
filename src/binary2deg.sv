@@ -20,6 +20,7 @@ logic[63:0] decimal_w,decimal_r;
 logic[21:0] binary_w,binary_r;
 logic[3:0] cnt_w,cnt_r;
 logic[3:0] frccnt_w,frccnt_r;
+logic finished;
 
 //combinational
 
@@ -27,15 +28,23 @@ assign o_finished = finished;
 assign o_deg = deg_r;
 
 always@(*) begin
+	deg_w = deg_r;
+	devider_w = devider_r;
+	tmp_w = tmp_r;
+	decimal_w = decimal_r;
+	binary_w = binary_r;
+	cnt_w = cnt_r;
+	frccnt_w = frccnt_r;
 	case(state_r)
 		IDLE: begin
 			if(i_start) begin
-				state_w = D2B;
+				state_w = D2B1;
 				decimal_w = i_decimal;
+				frccnt_w = i_frccnt;
 			end
 			else begin
 				state_w = state_r;
-				deciaml_w = 0;
+				decimal_w = 0;
 			end
 			binary_w = 0;
 			devider_w = 22'b101101000000000000000;
@@ -43,7 +52,7 @@ always@(*) begin
 		end
 		D2B1: begin
 			if(decimal_r[3:0] < 10) begin
-				tmp_w = (tmp_r << 3) + (tmp_r << 1) + {18'd0,decimal_r[3:0],13'd0};
+				tmp_w = (tmp_r >> 4)+(tmp_r >> 5)+(tmp_r >> 8)+(tmp_r >> 9)+(tmp_r >> 12)+(tmp_r >> 13)+{18'd0,decimal_r[3:0],13'd0};
 				state_w = state_r;
 			end
 			else begin
@@ -61,11 +70,12 @@ always@(*) begin
 				state_w = state_r;
 				cnt_w = cnt_r + 1;
 			end
-			tmp_w = (tmp_r << 3) + (tmp_r << 1) + {18'd0,decimal_r[3:0],13'd0};
+			tmp_w = (tmp_r >> 4)+(tmp_r >> 5)+(tmp_r >> 8)+(tmp_r >> 9)+(tmp_r >> 12)+(tmp_r >> 13)+{18'd0,decimal_r[3:0],13'd0};
 			decimal_w = decimal_r >> 4;
 		end
 		SHIFT: begin
-			if(cnt_r == frccnt_r) begin
+			tmp_w = (tmp_r << 3) + (tmp_r << 1);
+			if(cnt_r == (frccnt_r - 2)) begin
 				state_w = B2D;
 				binary_w = tmp_w[21:0];
 				cnt_w = 0;
@@ -74,7 +84,6 @@ always@(*) begin
 				state_w = state_r;
 				cnt_w = cnt_r + 1;
 			end
-			tmp_w = (tmp_r >> 4) +(tmp_r >> 5) +(tmp_r >> 8) +(tmp_r >> 9) +(tmp_r >> 12) +(tmp_r >> 13);
 		end
 		B2D: begin
 			if(cnt_r == 13) begin
@@ -113,6 +122,9 @@ always@(posedge i_clk or negedge i_rst) begin
 		deg_r <= 0;
 		cnt_r <= 0;
 		state_r <= IDLE;
+		decimal_r <= 64'd0;
+		tmp_r <= 35'd0;
+		frccnt_r <= 0;
 	end
 	else begin
 		devider_r <= devider_w;
@@ -120,6 +132,9 @@ always@(posedge i_clk or negedge i_rst) begin
 		deg_r <= deg_w;
 		cnt_r <= cnt_w;
 		state_r <= state_w;
+		decimal_r <= decimal_w;
+		tmp_r <= tmp_w;
+		frccnt_r <= frccnt_w;
 	end
 end
 

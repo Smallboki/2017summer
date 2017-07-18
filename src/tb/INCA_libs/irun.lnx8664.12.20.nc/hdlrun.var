@@ -72,4 +72,4 @@ define VIEW_MAP ( $VIEW_MAP \
 , .VAMS => VAMS \
 )
 define ELAB_SNAPSHOT
-define SNAPSHOT worklib.char_t_tb:sv
+define SNAPSHOT worklib.synchro_tb:sv

@@ -162,14 +162,15 @@ StickSet-LineWidth = 1
 StickSet-FillColor = purple6
 StickSet-TextColor = black
 [FSM_Dlg-Print]
-Orientation = Landscape      
+Orientation = Landscape    
 [FileBrowser]
-nWaveOpenFsdbDirHistory = /home/team12/2017summer/src/tb/char_r.fsdb,/home/team12,/home/team12/2017summer/src/tb,
+nWaveOpenFsdbDirHistory = /home/team12/2017summer/src/tb/synchro.fsdb,/home/team12,/home/team12/2017summer/src/tb/char_r.fsdb,/home/team12/2017summer/src/tb,
 [Form]
 version = Verdi3_2013.07
 wave/unknownSave.fm = 100,100,520,275
 wave/openWFile.fm = 101,65,823,696
-wave/getSignal.fm = 100,100,856,562
+wave/createBus.fm = 100,100,737,603
+wave/getSignal.fm = 82,90,856,562
 [General]
 autoSaveSession = FALSE
 TclAutoSource = 
@@ -237,8 +238,8 @@ FileName = test.ps
 PaperSize = A4 - 210x297 (mm)
 ColorPrint = FALSE
 [QtDialog]
-QwWarnMsgDlg = 373,219,600,250
 QwUserAskDlg = 332,191,324,142
+QwWarnMsgDlg = 373,219,600,250
 [Session Cache]
 1 = string (session file name)
 2 = string (session file name)
@@ -429,8 +430,8 @@ waveform_vertical_scroll_bar = TRUE
 scope_to_save_with_macro
 open_file_dir
 open_rc_file_dir
-getSignalForm = 100 100 856 562 200 439 400 120
-viewPort = 8 31 1362 705 100 65
+getSignalForm = 82 90 856 562 200 439 400 120
+viewPort = 0 23 1366 705 162 73
 signalSpacing = 5
 digitalSignalHeight = 15
 analogSignalHeight = 98
@@ -650,7 +651,8 @@ curveWindow_Drag&Drop_Mode = TRUE
 hspiceIncOpenMode = TRUE
 pcSelectMode = TRUE
 hierarchyDelimiter = /
-RecentFile1 = /home/team12/2017summer/src/tb/char_r.fsdb
+RecentFile1 = /home/team12/2017summer/src/tb/synchro.fsdb
+RecentFile2 = /home/team12/2017summer/src/tb/char_r.fsdb
 open_file_time_range = FALSE
 value_window_aligment = Right
 signal_window_alignment = Auto
@@ -761,7 +763,7 @@ AddImportArgument = TRUE
 LineBreakWithScope = TRUE
 StopAfterCompileOption = -tcl
 [turboSchema_Printer_Options]
-Orientation = Landscape      
+Orientation = Landscape    
 [turbo_library]
 bdb_load_scope = 
 [verisity]

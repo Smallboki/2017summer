@@ -20,16 +20,16 @@ Runtime environment variables:
 USER=team12
 LOGNAME=team12
 HOME=/home/team12
-PATH=/opt/CAD/INCISIV/cur/tools/bin/64bit:/opt/CAD/verdi/cur/bin:/opt/CAD/verdi/cur/nLint/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/CAD/INCISIV/cur/tools/dfII/bin:/opt/CAD/INCISIV/cur/tools/vtools/vfault/bin:/opt/CAD/INCISIV/cur/tools/bin
+PATH=/opt/CAD/INCISIV/cur/tools/bin/64bit:/opt/CAD/verdi/cur/bin:/opt/CAD/verdi/cur/nLint/bin:/opt/CAD/verdi/cur/bin:/opt/CAD/verdi/cur/nLint/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/opt/CAD/INCISIV/cur/tools/dfII/bin:/opt/CAD/INCISIV/cur/tools/vtools/vfault/bin:/opt/CAD/INCISIV/cur/tools/bin:/opt/CAD/INCISIV/cur/tools/dfII/bin:/opt/CAD/INCISIV/cur/tools/vtools/vfault/bin:/opt/CAD/INCISIV/cur/tools/bin
 MAIL=/var/mail/team12
 SHELL=/bin/zsh
-SSH_CLIENT=220.132.86.14 51138 12345
-SSH_CONNECTION=220.132.86.14 51138 192.168.163.250 12345
-SSH_TTY=/dev/pts/10
+SSH_CLIENT=220.132.86.14 64522 12345
+SSH_CONNECTION=220.132.86.14 64522 192.168.163.250 12345
+SSH_TTY=/dev/pts/5
 TERM=xterm
-DISPLAY=localhost:14.0
-XDG_SESSION_COOKIE=571dd7728312820a3245d4005631da4c-1499917648.787123-1595379424
-XDG_SESSION_ID=3164
+DISPLAY=localhost:11.0
+XDG_SESSION_COOKIE=571dd7728312820a3245d4005631da4c-1500341787.454820-302721951
+XDG_SESSION_ID=3364
 XDG_RUNTIME_DIR=/run/user/1013
 LANG=en_US.UTF-8
 LC_NUMERIC=zh_TW.UTF-8
@@ -42,16 +42,18 @@ LC_MEASUREMENT=zh_TW.UTF-8
 LC_IDENTIFICATION=zh_TW.UTF-8
 SHLVL=1
 PWD=/home/team12/2017summer/src/tb
-OLDPWD=/home/team12
+OLDPWD=/home/team12/2017summer/src
 SYNOPSYS_PATH=/opt/CAD
 CADENCE_PATH=/opt/CAD
 SPRING_PATH=/opt/CAD
 MENTOR_PATH=/opt/CAD
-LD_LIBRARY_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:/opt/CAD/verdi/cur/etc/lib/libstdc++/LINUX64/::/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib
+LD_LIBRARY_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:/opt/CAD/verdi/cur/etc/lib/libstdc++/LINUX64/:/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:/opt/CAD/verdi/cur/etc/lib/libstdc++/LINUX64/::/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib:/opt/CAD/INCISIV/cur//lib
 INCA_64BIT=
-LM_LICENSE_FILE=:5280@lsntu:26585@lsntu
-SHLIB_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:
+LM_LICENSE_FILE=:5280@lsntu:26585@lsntu:5280@lsntu:26585@lsntu
+SHLIB_PATH=/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:/opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/:
 USE_PIPE=1
+lsncku=
+lscic=
 _=/opt/CAD/INCISIV/cur/tools/bin/ncverilog
 /home/team12/2017summer/src/tb/INCA_libs/irun.lnx8664.12.20.nc/svpp.ts
 CDS_ARCH=lnx86
@@ -61,56 +63,56 @@ IMPERAS_PORT_FILE=.vsp_ovp_gdb_port
 TCL_LIBRARY=/opt/CAD/INCISIV/cur/tools/inca/files/tcl/library
 Runtime command line arguments:
 argv[0]=ncverilog
-argv[1]=char_t_tb.sv
-argv[2]=../transmitter.sv
-argv[3]=../char_t.sv
+argv[1]=synchro_tb.sv
+argv[2]=../synchro.sv
+argv[3]=../binary2deg.sv
 argv[4]=+access+r
-67 profile - 100
-          CPU/Mem usage: 0.050 sys,  0.040 user,  85.87M sys,  0.00M vm
-68 VC callback profile - scalar:0 vector:0
-69 Thu Jul 13 16:17:29 2017
-70 pliAppInit
-71 *Verdi3* : Enable Parallel Dumping.
-72 pliAppMiscSet: New Sim Round
-73 LIBSSCORE=found /opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/libsscore_ius122.so through $LD_LIBRARY_PATH setting.
-74 argv[0]: char_t.fsdb
-75 Catch signal 11. Stack trace follows:
-stack trace not available76 FSDB Dumper for IUS, Release Verdi3_2013.07, Linux x86_64/64bit, 07/04/2013
-77 (C) 1996 - 2013 by Synopsys, Inc.
-78 sps_call_fsdbDumpfile at 0 : /home/team12/2017summer/src/tb/char_t_tb.sv(28)
-79 argv[0]: char_t.fsdb
-80 *Verdi3* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
-81 *Verdi3* : Create FSDB file 'char_t.fsdb'
-82 sps_call_fsdbDumpvars at 0 : /home/team12/2017summer/src/tb/char_t_tb.sv(29)
-83 *Verdi3* : Begin traversing the scopes, layer (0).
-84 *Verdi3* : End of traversing.
-85 fsdbDumpvars traverse var: profile - 
-          CPU/Mem usage: 0.050 sys,  0.060 user,  229.88M sys,  0.00M vm
-                   incr: 0.000 sys,  0.010 user,  4.18M sys,  0.00M vm
-                   accu: 0.000 sys,  0.010 user,  4.18M sys,  0.00M vm
-              accu incr: 0.000 sys,  0.010 user,  4.18M sys,  0.00M vm
+69 profile - 100
+          CPU/Mem usage: 0.030 sys,  0.010 user,  85.93M sys,  0.00M vm
+70 VC callback profile - scalar:0 vector:0
+71 Tue Jul 18 16:47:07 2017
+72 pliAppInit
+73 *Verdi3* : Enable Parallel Dumping.
+74 pliAppMiscSet: New Sim Round
+75 LIBSSCORE=found /opt/CAD/verdi/cur/share/PLI/IUS/LINUX64/libsscore_ius122.so through $LD_LIBRARY_PATH setting.
+76 argv[0]: synchro.fsdb
+77 Catch signal 11. Stack trace follows:
+stack trace not available78 FSDB Dumper for IUS, Release Verdi3_2013.07, Linux x86_64/64bit, 07/04/2013
+79 (C) 1996 - 2013 by Synopsys, Inc.
+80 sps_call_fsdbDumpfile at 0 : /home/team12/2017summer/src/tb/synchro_tb.sv(22)
+81 argv[0]: synchro.fsdb
+82 *Verdi3* FSDB WARNING: The FSDB file already exists. Overwriting the FSDB file may crash the programs that are using this file.
+83 *Verdi3* : Create FSDB file 'synchro.fsdb'
+84 sps_call_fsdbDumpvars at 0 : /home/team12/2017summer/src/tb/synchro_tb.sv(23)
+85 *Verdi3* : Begin traversing the scopes, layer (0).
+86 *Verdi3* : End of traversing.
+87 fsdbDumpvars traverse var: profile - 
+          CPU/Mem usage: 0.040 sys,  0.020 user,  229.95M sys,  0.00M vm
+                   incr: 0.000 sys,  0.000 user,  4.19M sys,  0.00M vm
+                   accu: 0.000 sys,  0.000 user,  4.19M sys,  0.00M vm
+              accu incr: 0.000 sys,  0.000 user,  4.19M sys,  0.00M vm
 
-          Count usage: 49 var,  46 idcode,  46 callback
-                 incr: 49 var,  46 idcode,  46 callback
-                 accu: 49 var,  46 idcode,  46 callback
-            accu incr: 49 var,  46 idcode,  46 callback
-86 VC callback profile - scalar:0 vector:0
-87 Thu Jul 13 16:17:29 2017
-88 fsdbDumpvars: profile - 
-          CPU/Mem usage: 0.050 sys,  0.060 user,  230.93M sys,  0.00M vm
+          Count usage: 82 var,  79 idcode,  79 callback
+                 incr: 82 var,  79 idcode,  79 callback
+                 accu: 82 var,  79 idcode,  79 callback
+            accu incr: 82 var,  79 idcode,  79 callback
+88 VC callback profile - scalar:0 vector:0
+89 Tue Jul 18 16:47:07 2017
+90 fsdbDumpvars: profile - 
+          CPU/Mem usage: 0.040 sys,  0.020 user,  231.00M sys,  0.00M vm
                    incr: 0.000 sys,  0.000 user,  1.05M sys,  0.00M vm
-                   accu: 0.000 sys,  0.010 user,  5.23M sys,  0.00M vm
+                   accu: 0.000 sys,  0.000 user,  5.25M sys,  0.00M vm
               accu incr: 0.000 sys,  0.000 user,  1.05M sys,  0.00M vm
 
-          Count usage: 49 var,  46 idcode,  46 callback
+          Count usage: 82 var,  79 idcode,  79 callback
                  incr: 0 var,  0 idcode,  0 callback
-                 accu: 49 var,  46 idcode,  46 callback
+                 accu: 82 var,  79 idcode,  79 callback
             accu incr: 0 var,  0 idcode,  0 callback
-89 VC callback profile - scalar:22 vector:24
-90 Thu Jul 13 16:17:29 2017
-91 End of simulation at 2240300
-92 VC callback profile - scalar:90259 vector:49440
-93 Thu Jul 13 16:17:29 2017
-94 Parallel profile    -  Flush:2 ProduceWait:2 ConsumerWait:3 BlockUsed:2
-95 SimExit
-96 Sim process exit
+91 VC callback profile - scalar:29 vector:50
+92 Tue Jul 18 16:47:07 2017
+93 End of simulation at 412200
+94 VC callback profile - scalar:16711 vector:1708
+95 Tue Jul 18 16:47:07 2017
+96 Parallel profile    -  Flush:2 ProduceWait:0 ConsumerWait:0 BlockUsed:0
+97 SimExit
+98 Sim process exit

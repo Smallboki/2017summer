@@ -5,9 +5,9 @@
 -XLMODE
 ./INCA_libs/irun.lnx8664.12.20.nc
 -RUNMODE
-char_t_tb.sv
-../transmitter.sv
-../char_t.sv
+synchro_tb.sv
+../synchro.sv
+../binary2deg.sv
 -CDSLIB
 ./INCA_libs/irun.lnx8664.12.20.nc/cdsrun.lib
 -HDLVAR

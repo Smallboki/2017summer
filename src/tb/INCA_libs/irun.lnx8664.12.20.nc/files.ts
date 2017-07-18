@@ -1,6 +1,9 @@
-1499925380 /home/team12/2017summer/src/tb/char_r_tb.sv
-1499926579 /home/team12/2017summer/src/char_r.sv
-1499925408 /home/team12/2017summer/src/receiver.sv
-1499933848 /home/team12/2017summer/src/tb/char_t_tb.sv
-1499933478 /home/team12/2017summer/src/transmitter.sv
-1499931345 /home/team12/2017summer/src/char_t.sv
+1500025413 /home/team12/2017summer/src/tb/char_r_tb.sv
+1500003425 /home/team12/2017summer/src/char_r.sv
+1500025388 /home/team12/2017summer/src/receiver.sv
+1500355893 /home/team12/2017summer/src/tb/char_t_tb.sv
+1500003464 /home/team12/2017summer/src/transmitter.sv
+1500003431 /home/team12/2017summer/src/char_t.sv
+1500356075 /home/team12/2017summer/src/tb/synchro_tb.sv
+1500366102 /home/team12/2017summer/src/synchro.sv
+1500367625 /home/team12/2017summer/src/binary2deg.sv

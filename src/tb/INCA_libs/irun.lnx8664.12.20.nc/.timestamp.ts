@@ -4,3 +4,6 @@
 1499933848 /home/team12/2017summer/src/tb/char_t_tb.sv
 1499933478 /home/team12/2017summer/src/transmitter.sv
 1499931345 /home/team12/2017summer/src/char_t.sv
+1500356075 /home/team12/2017summer/src/tb/synchro_tb.sv
+1500366102 /home/team12/2017summer/src/synchro.sv
+1500367625 /home/team12/2017summer/src/binary2deg.sv
