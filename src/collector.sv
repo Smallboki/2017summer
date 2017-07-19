@@ -8,6 +8,7 @@ module collector(
 	input[9:0] i_rx,
 	output[9:0] o_tx,
 
+	output[13:0] o_synchro,
 	//RAM
 	output[`ADDRWIDTH - 1:0] o_addr,
 	input[7:0] i_D,
@@ -41,23 +42,26 @@ localparam OFFSET9 = 9216;
 localparam I422 = 10;
 localparam O422 = 10;
 localparam OUART = 1;
-localparam OSYN = 0;
+localparam OSYN = 1;
 localparam OETHER = 0;
+localparam OPORT = 12;
 //logics
 
 	//receiver & transmitter
 enum {RECV,SEND} state_w,state_r;
 
 logic[9:0] ready,read,used;
-logic[10:0] write,full;
-logic[`ADDRWIDTH - 1:0] readaddr_w[109:0],readaddr_r[109:0];
+logic[OPORT - 1:0] write,full;
+logic[`ADDRWIDTH - 1:0] readaddr_w[OPORT * 10 - 1:0],readaddr_r[OPORT * 10 - 1:0];
 logic[`ADDRWIDTH - 1:0] writeaddr_w[9:0],writeaddr_r[9:0];
 logic[`ADDRWIDTH - 1:0] addr;
 logic we_r,re_r;
 
+logic[13:0] deg;
+
 logic[3:0] rport_w,rport_r;
 logic[3:0] sport_w,sport_r;
-logic[3:0] port_w[10:0],port_r[10:0];
+logic[3:0] port_w[OPORT:0],port_r[OPORT:0];
 
 logic rready;
 logic[`ADDRWIDTH:0] offset[9:0];
@@ -65,7 +69,7 @@ logic[`ADDRWIDTH:0] offset[9:0];
 	//controlunit
 enum {ADDR,DATA} cstate_w,cstate_r;
 
-logic[15:0] ctrl_w[I422 + I422 + O422 + OUART:0],ctrl_r[I422 + I422 + O422 + OUART:0];//0~9:422 portmap; 10~29: baud; 30: uart;
+logic[15:0] ctrl_w[31:0],ctrl_r[31:0];//0~9:422 portmap; 10~29: baud; 30: uart; 31: Synchro;
 logic[15:0] portmap;
 logic[15:0] caddr_w,caddr_r;
 //submodules
@@ -91,7 +95,7 @@ transmitter xtransmitter_6(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[
 transmitter xtransmitter_7(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[27]),.o_full(full[7]),.i_write(write[7]),.o_tx(o_tx[7]));
 transmitter xtransmitter_8(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[28]),.o_full(full[8]),.i_write(write[8]),.o_tx(o_tx[8]));
 transmitter xtransmitter_9(.i_clk(i_clk),.i_rst(i_rst),.i_D(i_D),.i_baud(ctrl_r[29]),.o_full(full[9]),.i_write(write[9]),.o_tx(o_tx[9]));
-//synchrp xsynchro ();
+synchrp xsynchro(.i_clk(i_clk),.i_rst(i_rst),.i_write(write[11]),.i_char(i_D),.o_full(full[11]),.o_check(),.o_deg(deg));
 //combinational
 
 assign rready = &ready;
@@ -112,6 +116,7 @@ assign offset[9] = OFFSET9;
 assign full[10] = i_full;
 assign o_write = write[10];
 assign o_char = i_D;
+assign o_synchro = deg;
 //receive & transmmit
 always@(*) begin
 	case(state_r)
@@ -146,15 +151,15 @@ always@(*) begin
 				state_w = RECV;
 			else
 				state_w = SEND;
-			for(i = 0; i < 11; i = i + 1) begin
+			for(i = 0; i < OPORT; i = i + 1) begin
 				portmap = ctrl_r[i];
 				if(sport_r == i && !full[i]) begin
 					for(j = 0; j < 10; j = j + 1) begin
 						if(port_r[i] == j) begin
-							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j] < offset[i] + 1024?readaddr_r[i * 10 + j]+1:offset[j];
+							readaddr_w[i*OPORT+j] = readaddr_r[i*OPORT+j] < (offset[i]+1024)?readaddr_r[i*OPORT+j]+1:offset[j];
 						end
 						else begin
-							readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j];
+							readaddr_w[i * OPORT + j] = readaddr_r[i * OPORT + j];
 						end
 					end
 
@@ -174,24 +179,23 @@ always@(*) begin
 				end
 				else begin
 					for(j = 0; j < 10; j = j + 1) begin
-						readaddr_w[i * 10 + j] = readaddr_r[i * 10 + j];
+						readaddr_w[i * OPORT + j] = readaddr_r[i * OPORT + j];
 					end
 					port_w[i] = port_r[i];
 					write[i] = 0;
 				end
 			end
-			addr = readaddr_r[sport_r * 10 + port_r[sport_r]];//tsan tsan
+			addr = readaddr_r[sport_r * OPORT + port_r[sport_r]];//tsan tsan
 			re_r = 1;
-			ystem::Threading
 			rport_w = rport_r;
-			sport_w = sport_r == 10? 0: sport_r + 1;
+			sport_w = sport_r == OPORT? 0: sport_r + 1;
 		end
 	endcase
 end
 	//control unit
 always@(*) begin
 	if(cstate_r == ADDR) begin
-		for(i = 0; i < 30; i = i + 1) begin
+		for(i = 0; i < 32; i = i + 1) begin
 			ctrl_w[i] = ctrl_r[i];
 		end
 		caddr_w = i_inst;
@@ -201,12 +205,13 @@ always@(*) begin
 			cstate_w = ADDR;
 	end
 	else begin
-		for(i = 0; i < 29; i = i + 1) begin
+		for(i = 0; i < 32; i = i + 1) begin
 			if(caddr_r == i)
 				ctrl_w[i] = i_inst;
 			else
 				ctrl_w[i] = ctrl_r[i];
 		end
+		caddr_w = caddr_r;
 		cstate_w = i_set ? ADDR : DATA;
 	end
 end
@@ -214,33 +219,26 @@ end
 
 always@(posedge i_clk or negedge i_rst) begin
 	if(!i_rst) begin
-		for(i = 0; i < 10;i = i + 1) begin
+		for(i = 0; i < OPORT;i = i + 1) begin
 			port_r[i] <= 0;
 		end
-		for(i = 0; i < 10;i = i + 1) begin
+		for(i = 0; i < OPORT;i = i + 1) begin
 			for(j = 0; j < 10;j = j + 1) begin
 				readaddr_r[i * 10 + j] <= offset[j];
 			end
 		end
 		sport_r <= 0;
 		rport_r <= 0;
-		writeaddr_r[0] <= OFFSET0;
-		writeaddr_r[1] <= OFFSET1;
-		writeaddr_r[2] <= OFFSET2;
-		writeaddr_r[3] <= OFFSET3;
-		writeaddr_r[4] <= OFFSET4;
-		writeaddr_r[5] <= OFFSET5;
-		writeaddr_r[6] <= OFFSET6;
-		writeaddr_r[7] <= OFFSET7;
-		writeaddr_r[8] <= OFFSET8;
-		writeaddr_r[9] <= OFFSET9;
+		for(i = 0; i < 10;i = i + 1) begin
+			writeaddr_r[i] <= offset[i];
+		end
 	end
 	else begin
 		for(i = 0; i < 10;i = i + 1) begin
 			writeaddr_r[i] <= writeaddr_w[i];
 			port_r[i] <= port_w[i];
 		end
-		for(i = 0; i < 100; i = i + 1) begin
+		for(i = 0; i < (OPORT * 10); i = i + 1) begin
 			readaddr_r[i] <= readaddr_w[i];
 		end
 		sport_r <= sport_w;
@@ -257,9 +255,10 @@ always@(posedge i_avmclk or negedge i_rst) begin
 			ctrl_r[i] <= 16'd1;
 		end
 		ctrl_r[30] <= 16'b0000001111111111;
+		ctrl_r[31] <= 16'b0000000000000001;
 	end
 	else begin
-		for(i = 0; i < 31; i = i + 1) begin
+		for(i = 0; i < 32; i = i + 1) begin
 			ctrl_r[i] <= ctrl_w[i];
 		end
 	end
