@@ -23,7 +23,10 @@ module collector(
 
 	output o_write,
 	input i_full,
-	output o_char
+	output o_char,
+	// to/from ether
+	output o_echar,
+	output o_ewrite
 	);
 //parameters
 
@@ -43,8 +46,8 @@ localparam I422 = 10;
 localparam O422 = 10;
 localparam OUART = 1;
 localparam OSYN = 1;
-localparam OETHER = 0;
-localparam OPORT = 12;
+localparam OETHER = 1;
+localparam OPORT = 13;
 //logics
 
 	//receiver & transmitter
@@ -69,7 +72,7 @@ logic[`ADDRWIDTH:0] offset[9:0];
 	//controlunit
 enum {ADDR,DATA} cstate_w,cstate_r;
 
-logic[15:0] ctrl_w[31:0],ctrl_r[31:0];//0~9:422 portmap; 10~29: baud; 30: uart; 31: Synchro;
+logic[15:0] ctrl_w[35:0],ctrl_r[35:0];//0~9:422 portmap; 10~29: baud; 30: uart; 31: Synchro; 32: ether port; 33~35: ether mac;
 logic[15:0] portmap;
 logic[15:0] caddr_w,caddr_r;
 //submodules
@@ -115,7 +118,9 @@ assign offset[9] = OFFSET9;
 //from/to uart
 assign full[10] = i_full;
 assign o_write = write[10];
+assign o_ewrite = write[12];
 assign o_char = i_D;
+assign o_echar = i_D;
 assign o_synchro = deg;
 //receive & transmmit
 always@(*) begin
@@ -195,7 +200,7 @@ end
 	//control unit
 always@(*) begin
 	if(cstate_r == ADDR) begin
-		for(i = 0; i < 32; i = i + 1) begin
+		for(i = 0; i < 36; i = i + 1) begin
 			ctrl_w[i] = ctrl_r[i];
 		end
 		caddr_w = i_inst;
@@ -205,7 +210,7 @@ always@(*) begin
 			cstate_w = ADDR;
 	end
 	else begin
-		for(i = 0; i < 32; i = i + 1) begin
+		for(i = 0; i < 36; i = i + 1) begin
 			if(caddr_r == i)
 				ctrl_w[i] = i_inst;
 			else
@@ -256,9 +261,13 @@ always@(posedge i_avmclk or negedge i_rst) begin
 		end
 		ctrl_r[30] <= 16'b0000001111111111;
 		ctrl_r[31] <= 16'b0000000000000001;
+		ctrl_r[32] <= 16'b0000001111111111;
+		ctrl_r[33] <= 16'hff;
+		ctrl_r[34] <= 16'hff;
+		ctrl_r[35] <= 16'hff;
 	end
 	else begin
-		for(i = 0; i < 32; i = i + 1) begin
+		for(i = 0; i < 36; i = i + 1) begin
 			ctrl_r[i] <= ctrl_w[i];
 		end
 	end
